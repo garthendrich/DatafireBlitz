@@ -1,9 +1,9 @@
 package components;
 
-public class Player extends Sprite {
-    static int WIDTH = 48;
-    static int HEIGHT = 48;
-    static int MOVEMENT_SPEED = 2;
+public class Player extends MovableEntity {
+    private static int WIDTH = 48;
+    private static int HEIGHT = 48;
+    private static int MOVEMENT_SPEED = 2;
 
     int x;
     int y;

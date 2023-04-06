@@ -2,8 +2,8 @@ package main;
 
 import java.util.ArrayList;
 
+import components.Entity;
 import components.Player;
-import components.Sprite;
 
 public class GameLoop implements Runnable {
     private int FPS = 120;
@@ -53,10 +53,10 @@ public class GameLoop implements Runnable {
     }
 
     private void updateCanvas() {
-        ArrayList<Sprite> sprites = new ArrayList<Sprite>();
-        sprites.add(player);
+        ArrayList<Entity> entities = new ArrayList<Entity>();
+        entities.add(player);
 
-        gamePanel.setSprites(sprites);
+        gamePanel.setEntities(entities);
         gamePanel.repaint();
     }
 }

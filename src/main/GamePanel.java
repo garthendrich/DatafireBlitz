@@ -5,21 +5,21 @@ import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
-import components.Sprite;
+import components.Entity;
 
 class GamePanel extends JPanel {
-    private ArrayList<Sprite> sprites = new ArrayList<Sprite>();
+    private ArrayList<Entity> entities = new ArrayList<Entity>();
 
-    void setSprites(ArrayList<Sprite> sprites) {
-        this.sprites = sprites;
+    void setEntities(ArrayList<Entity> entities) {
+        this.entities = entities;
     }
 
     @Override
     protected void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
 
-        for (Sprite sprite : sprites) {
-            sprite.draw(graphics);
+        for (Entity entity : entities) {
+            entity.draw(graphics);
         }
     }
 }
