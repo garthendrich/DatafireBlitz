@@ -24,20 +24,23 @@ public class GameLoop implements Runnable {
     void start() {
         gameThread.start();
         gamePanel.addKeyListener(keyInputs);
-        gamePanel.requestFocus();
+        gamePanel.requestFocusInWindow();
     }
 
     @Override
     public void run() {
-        double nextFrameNanoSeconds = System.nanoTime() + NANO_SECONDS_PER_FRAME;
+        double currentTime = System.nanoTime();
+        double nextFrameNanoSeconds = currentTime + NANO_SECONDS_PER_FRAME;
 
         while (true) {
-            if (System.nanoTime() >= nextFrameNanoSeconds) {
+            if (currentTime >= nextFrameNanoSeconds) {
                 updatePlayerMovement();
                 updateCanvas();
 
                 nextFrameNanoSeconds += NANO_SECONDS_PER_FRAME;
             }
+
+            currentTime = System.nanoTime();
         }
     }
 

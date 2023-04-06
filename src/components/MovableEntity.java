@@ -4,7 +4,7 @@ class MovableEntity extends Entity {
     private int movementSpeed;
 
     private int dx = 0;
-    private int dy = 0;
+    protected double dy = 0;
 
     MovableEntity(int x, int y, int width, int height, int movementSpeed) {
         super(x, y, width, height);
