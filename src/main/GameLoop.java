@@ -25,8 +25,8 @@ public class GameLoop implements Runnable {
     }
 
     private void createPlatforms() {
-        platforms.add(new Entity(256, 128, 256, 128));
-        platforms.add(new Entity(128, gamePanel.getHeight() - 128, gamePanel.getWidth() - 256, 64));
+        platforms.add(new Entity(256, 256, 256, 64));
+        platforms.add(new Entity(128, gamePanel.getHeight() - 96, gamePanel.getWidth() - 256, 32));
     }
 
     void start() {
@@ -58,6 +58,10 @@ public class GameLoop implements Runnable {
             player.moveLeft();
         } else if (keyInputs.moveRight && !keyInputs.moveLeft) {
             player.moveRight();
+        }
+
+        if (keyInputs.moveUp) {
+            player.jump();
         }
 
         player.updatePosition(platforms);

@@ -5,11 +5,21 @@ import java.util.ArrayList;
 public class Player extends MovableEntity {
     private static int WIDTH = 48;
     private static int HEIGHT = 48;
-    private static int MOVEMENT_SPEED = 2;
-    private double GRAVITY = 0.1;
+    private static int MOVEMENT_SPEED = 3;
+    private int JUMP_HEIGHT = 6;
+    private double GRAVITY = 0.12;
+
+    private boolean canJump = true;
 
     public Player(int x, int y) {
         super(x, y, WIDTH, HEIGHT, MOVEMENT_SPEED);
+    }
+
+    public void jump() {
+        if (canJump) {
+            dy = -JUMP_HEIGHT;
+            canJump = false;
+        }
     }
 
     public void updatePosition(ArrayList<Entity> platforms) {
@@ -19,6 +29,7 @@ public class Player extends MovableEntity {
             if (willBeOnTopOf(platform)) {
                 willApplyGravity = false;
                 dy = 0;
+                canJump = true;
             }
         }
 
