@@ -11,6 +11,7 @@ public class GameLoop implements Runnable {
 
     private GamePanel gamePanel;
     private Thread gameThread;
+    private KeyInputs keyInputs = new KeyInputs();
 
     private Player player = new Player(100, 100);
 
@@ -22,6 +23,8 @@ public class GameLoop implements Runnable {
 
     void start() {
         gameThread.start();
+        gamePanel.addKeyListener(keyInputs);
+        gamePanel.requestFocus();
     }
 
     @Override
@@ -30,17 +33,30 @@ public class GameLoop implements Runnable {
 
         while (true) {
             if (System.nanoTime() >= nextFrameNanoSeconds) {
-                player.setMovementToRight(1);
-                player.updatePosition();
-
-                ArrayList<Sprite> sprites = new ArrayList<Sprite>();
-                sprites.add(player);
-
-                gamePanel.setSprites(sprites);
-                gamePanel.repaint();
+                updatePlayerMovement();
+                updateCanvas();
 
                 nextFrameNanoSeconds += NANO_SECONDS_PER_FRAME;
             }
         }
+    }
+
+    private void updatePlayerMovement() {
+        player.stopHorizontalMovement();
+        if (keyInputs.moveLeft && !keyInputs.moveRight) {
+            player.moveLeft();
+        } else if (keyInputs.moveRight && !keyInputs.moveLeft) {
+            player.moveRight();
+        }
+
+        player.updatePosition();
+    }
+
+    private void updateCanvas() {
+        ArrayList<Sprite> sprites = new ArrayList<Sprite>();
+        sprites.add(player);
+
+        gamePanel.setSprites(sprites);
+        gamePanel.repaint();
     }
 }
