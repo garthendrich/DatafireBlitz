@@ -13,12 +13,20 @@ public class GameLoop implements Runnable {
     private Thread gameThread;
     private KeyInputs keyInputs = new KeyInputs();
 
-    private Player player = new Player(100, 100);
+    private Player player = new Player(400, 0);
+    private ArrayList<Entity> platforms = new ArrayList<Entity>();
 
     GameLoop(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
 
         gameThread = new Thread(this);
+
+        createPlatforms();
+    }
+
+    private void createPlatforms() {
+        platforms.add(new Entity(256, 128, 256, 128));
+        platforms.add(new Entity(128, gamePanel.getHeight() - 128, gamePanel.getWidth() - 256, 64));
     }
 
     void start() {
@@ -52,12 +60,13 @@ public class GameLoop implements Runnable {
             player.moveRight();
         }
 
-        player.updatePosition();
+        player.updatePosition(platforms);
     }
 
     private void updateCanvas() {
         ArrayList<Entity> entities = new ArrayList<Entity>();
         entities.add(player);
+        entities.addAll(platforms);
 
         gamePanel.setEntities(entities);
         gamePanel.repaint();

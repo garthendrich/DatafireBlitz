@@ -5,10 +5,10 @@ import java.awt.Graphics;
 public class Entity {
     protected int x;
     protected int y;
-    private int width;
-    private int height;
+    protected int width;
+    protected int height;
 
-    Entity(int x, int y, int width, int height) {
+    public Entity(int x, int y, int width, int height) {
         this.x = x;
         this.y = y;
         this.width = width;
