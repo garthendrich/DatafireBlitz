@@ -5,6 +5,8 @@ import javax.swing.JFrame;
 public class PlatformShooter {
     public static void main(String[] args) {
         JFrame window = createWindow();
+        GamePanel gamePanel = new GamePanel();
+        window.add(gamePanel);
         window.setVisible(true);
     }
 
