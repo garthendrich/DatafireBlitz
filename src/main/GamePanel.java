@@ -4,11 +4,15 @@ import java.awt.Graphics;
 
 import javax.swing.JPanel;
 
-class GamePanel extends JPanel {
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
+import components.Player;
 
-        g.fillRect(100, 100, 50, 50);
+class GamePanel extends JPanel {
+    private Player player = new Player(100, 100);
+
+    @Override
+    protected void paintComponent(Graphics graphics) {
+        super.paintComponent(graphics);
+
+        player.draw(graphics);
     }
 }
