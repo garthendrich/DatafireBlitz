@@ -1,13 +1,15 @@
 package components;
 
+import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 public class Player extends MovableEntity {
     private static int WIDTH = 48;
     private static int HEIGHT = 48;
     private static int MOVEMENT_SPEED = 3;
-    private int JUMP_HEIGHT = 6;
-    private double GRAVITY = 0.12;
+    private int JUMP_HEIGHT = 8;
+    private double GRAVITY = 0.16;
 
     private boolean canJump = true;
 
@@ -26,9 +28,10 @@ public class Player extends MovableEntity {
         boolean willApplyGravity = true;
 
         for (Entity platform : platforms) {
-            if (willBeOnTopOf(platform)) {
-                willApplyGravity = false;
+            if (willStandOn(platform)) {
+                // y = platform.y - height; // remove subtle bounce
                 dy = 0;
+                willApplyGravity = false;
                 canJump = true;
             }
         }
@@ -40,50 +43,19 @@ public class Player extends MovableEntity {
         super.updatePosition();
     }
 
-    public boolean willBeOnTopOf(Entity entity) {
-        return willCollideWith(entity) &&
-                isAbove(entity) &&
-                !isToTheLeftOf(entity) &&
-                !isToTheRightOf(entity);
+    public boolean willStandOn(Entity entity) {
+        return isAbove(entity) && !isCollidingWith(entity) && willCollideWith(entity);
     }
 
-    public boolean willCollideWith(Entity entity) {
-        if (willBeToTheLeftOf(entity) || willBeToTheRightOf(entity)) {
-            return false;
-        }
+    public boolean willCollideWith(Entity anotherEntity) {
+        Rectangle2D.Double entityRect = new Rectangle2D.Double(x + dx, y + dy, width, height);
+        Rectangle anotherEntityRect = new Rectangle(anotherEntity.x, anotherEntity.y, anotherEntity.width,
+                anotherEntity.height);
 
-        if (willBeAbove(entity) || willBeBelow(entity)) {
-            return false;
-        }
-
-        return true;
+        return entityRect.intersects(anotherEntityRect);
     }
 
     private boolean isAbove(Entity entity) {
         return y + height <= entity.y;
-    }
-
-    private boolean isToTheLeftOf(Entity entity) {
-        return x + width <= entity.x;
-    }
-
-    private boolean isToTheRightOf(Entity entity) {
-        return x >= entity.x + entity.width;
-    }
-
-    private boolean willBeAbove(Entity entity) {
-        return y + dy + height <= entity.y;
-    }
-
-    private boolean willBeBelow(Entity entity) {
-        return y + dy >= entity.y + entity.height;
-    }
-
-    private boolean willBeToTheLeftOf(Entity entity) {
-        return x + dx + width <= entity.x;
-    }
-
-    private boolean willBeToTheRightOf(Entity entity) {
-        return x + dx >= entity.x + entity.width;
     }
 }
