@@ -34,16 +34,13 @@ public class GameLoop implements Runnable {
     private void createBullet(){
         if(keyInputs.bulletDown || keyInputs.bulletLeft || keyInputs.bulletRight || keyInputs.bulletUp){
 
-            Bullet b = new Bullet(player.getX(), player.getY());
-            if(keyInputs.bulletDown){
-                b.moveDown();
-            }else if(keyInputs.bulletLeft){
+            Bullet b = new Bullet(player.getPosX(), player.getPosY());
+            if(keyInputs.bulletLeft){
                 b.moveLeft();
             }else if(keyInputs.bulletRight){
                 b.moveRight();
-            }else if(keyInputs.bulletUp){
-                b.moveUp();
             }
+
             bullets.add(b);
 
         }
@@ -84,8 +81,6 @@ public class GameLoop implements Runnable {
     }
 
     private void updatePlayerMovement() {
-        boolean down = false;
-        
         player.stopHorizontalMovement();
 
         if (keyInputs.moveLeft && !keyInputs.moveRight) {
@@ -97,10 +92,10 @@ public class GameLoop implements Runnable {
         if (keyInputs.moveUp) {
             player.jump();
         } else if(keyInputs.moveDown){
-            down = true;
+            player.moveDown();
         }
 
-        player.updatePosition(platforms, down);
+        player.updatePosition(platforms);
     }
 
     private void updateBulletMovement(){

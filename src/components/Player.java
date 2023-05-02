@@ -5,8 +5,8 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 public class Player extends MovableEntity {
-    private static int WIDTH = 48;
-    private static int HEIGHT = 48;
+    static int WIDTH = 48;
+    static int HEIGHT = 48;
     private static int MOVEMENT_SPEED = 3;
     private int JUMP_HEIGHT = 8;
     private double GRAVITY = 0.16;
@@ -57,5 +57,17 @@ public class Player extends MovableEntity {
 
     private boolean isAbove(Entity entity) {
         return y + height <= entity.y;
+    }
+
+    public int getPosX(){
+        return this.x;
+    }
+
+    public int getPosY(){
+        return this.y;
+    }
+
+    public void moveDown(){
+        this.y++;
     }
 }
