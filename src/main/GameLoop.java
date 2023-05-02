@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import components.Entity;
 import components.Player;
-import components.Dummy;
 
 public class GameLoop implements Runnable {
     private int FPS = 120;
@@ -15,9 +14,9 @@ public class GameLoop implements Runnable {
     private KeyInputs keyInputs = new KeyInputs();
 
     private Player player = new Player(400, 0);
-    private Dummy dummy1 = new Dummy(200, 0);
-    private Dummy dummy2 = new Dummy(300, 0);
-    private Dummy dummy3 = new Dummy(500, 0);
+    private Player dummy1 = new Player(200, 0);
+    private Player dummy2 = new Player(300, 0);
+    private Player dummy3 = new Player(500, 0);
     private ArrayList<Entity> platforms = new ArrayList<Entity>();
 
     GameLoop(GamePanel gamePanel) {
