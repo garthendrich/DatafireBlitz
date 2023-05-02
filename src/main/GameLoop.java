@@ -130,14 +130,17 @@ public class GameLoop implements Runnable {
         players.add(dummy2);
         players.add(dummy3);
 
+        ArrayList<Bullet> collidedBullets = new ArrayList<Bullet>();
         for (Bullet bullet : bullets) {
             for (Player player : players) {
                 if (bullet.isCollidingWith(player) && bullet.getTeam() != player.getTeam()) {
-                    player.respawn(); // ! temp
-                    // remove bullet from array
+                    player.knockback(bullet.getImpact());
+                    collidedBullets.add(bullet);
+                    break;
                 }
             }
         }
+        bullets.removeAll(collidedBullets);
     }
 
     private void updateCanvas() {

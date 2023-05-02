@@ -12,11 +12,13 @@ public class Player extends MovableEntity {
     private double GRAVITY = 0.16;
     private double BPS = 4.0;
     private double SECONDS_PER_BULLET = 1.0 / BPS;
+    private double KNOCKBACK_FRICTION = 0.1;
 
     private char team;
     private boolean onPlatform = false;
     private boolean canJump = true;
     private double nextBulletFireSeconds = 0.0;
+    private double knockback;
 
     public Player(int x, int y, char team) {
         super(x, y, WIDTH, HEIGHT, MOVEMENT_SPEED);
@@ -43,6 +45,13 @@ public class Player extends MovableEntity {
     }
 
     public void updatePosition(ArrayList<Entity> platforms) {
+        manageGravity(platforms);
+        manageKnockback();
+
+        super.updatePosition();
+    }
+
+    private void manageGravity(ArrayList<Entity> platforms) {
         boolean willApplyGravity = true;
         onPlatform = false;
 
@@ -57,10 +66,20 @@ public class Player extends MovableEntity {
         }
 
         if (willApplyGravity) {
-            this.dy += GRAVITY;
+            dy += GRAVITY;
         }
+    }
 
-        super.updatePosition();
+    private void manageKnockback() {
+        x += knockback;
+
+        if (knockback < 0 && knockback < -KNOCKBACK_FRICTION) {
+            knockback += KNOCKBACK_FRICTION;
+        } else if (knockback > 0 && knockback > KNOCKBACK_FRICTION) {
+            knockback -= KNOCKBACK_FRICTION;
+        } else {
+            knockback = 0;
+        }
     }
 
     public boolean willStandOn(Entity entity) {
@@ -79,19 +98,23 @@ public class Player extends MovableEntity {
         return y + height <= entity.y;
     }
 
+    public void moveDown() {
+        if (onPlatform) {
+            onPlatform = false;
+            this.y++;
+        }
+    }
+
+    public void knockback(int magnitude) {
+        this.knockback += magnitude;
+    }
+
     public int getPosX() {
         return this.x;
     }
 
     public int getPosY() {
         return this.y;
-    }
-
-    public void moveDown() {
-        if (onPlatform) {
-            onPlatform = false;
-            this.y++;
-        }
     }
 
     public char getTeam() {

@@ -6,6 +6,7 @@ public class Bullet extends MovableEntity {
     private static int MOVEMENT_SPEED = 8;
 
     private char team;
+    private int impact = 4;
 
     public Bullet(int x, int y, char team) {
         super(x + (Player.WIDTH / 2), y + (Player.HEIGHT / 2), WIDTH, HEIGHT, MOVEMENT_SPEED);
@@ -17,5 +18,11 @@ public class Bullet extends MovableEntity {
         return this.team;
     }
 
-    // TODO: handle dispawning when bullet is outside canvas
+    public int getImpact() {
+        if (this.dx > 0) {
+            return this.impact;
+        }
+
+        return -this.impact;
+    }
 }
