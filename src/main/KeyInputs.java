@@ -13,8 +13,6 @@ public class KeyInputs implements KeyListener {
     // for bullet direction
     boolean bulletLeft = false;
     boolean bulletRight = false;
-    boolean bulletUp = false;
-    boolean bulletDown = false;
 
     @Override
     public void keyTyped(KeyEvent event) {
@@ -46,12 +44,6 @@ public class KeyInputs implements KeyListener {
                 break;
             case KeyEvent.VK_LEFT:
                 bulletLeft = value;
-                break;
-            case KeyEvent.VK_DOWN:
-                bulletDown = value;
-                break;
-            case KeyEvent.VK_UP:
-                bulletUp = value;
                 break;
             case KeyEvent.VK_RIGHT:
                 bulletRight = value;

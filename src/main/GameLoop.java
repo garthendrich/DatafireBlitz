@@ -32,7 +32,7 @@ public class GameLoop implements Runnable {
     }
 
     private void createBullet(){
-        if(keyInputs.bulletDown || keyInputs.bulletLeft || keyInputs.bulletRight || keyInputs.bulletUp){
+        if(keyInputs.bulletLeft || keyInputs.bulletRight){
 
             Bullet b = new Bullet(player.getPosX(), player.getPosY());
             if(keyInputs.bulletLeft){
@@ -69,7 +69,6 @@ public class GameLoop implements Runnable {
                 }
                 
                 updateBulletMovement();
-                
                 updateCanvas();
 
                 nextBulletInterval -= NANO_SECONDS_PER_FRAME;
