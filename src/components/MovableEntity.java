@@ -29,7 +29,7 @@ class MovableEntity extends Entity {
         y += dy;
     }
 
-    public double getPosY(){
+    public int getPosY(){
         return this.y;
     }
 
