@@ -11,6 +11,10 @@ public class Player extends MovableEntity {
     private int JUMP_HEIGHT = 8;
     private double GRAVITY = 0.16;
 
+    private double BPS = 4.0;
+    private double SECONDS_PER_BULLET = 1.0 / BPS;
+    private double nextBulletFireSeconds = 0.0;
+
     private boolean canJump = true;
     private boolean onPlatform = false;
 
@@ -23,6 +27,17 @@ public class Player extends MovableEntity {
             dy = -JUMP_HEIGHT;
             canJump = false;
         }
+    }
+
+    public Bullet fireBullet() {
+        double currentTimeSeconds = System.nanoTime() / 1_000_000_000.0;
+
+        if (currentTimeSeconds >= nextBulletFireSeconds) {
+            nextBulletFireSeconds = currentTimeSeconds + SECONDS_PER_BULLET;
+            return new Bullet(this.getPosX(), this.getPosY());
+        }
+
+        return null;
     }
 
     public void updatePosition(ArrayList<Entity> platforms) {
@@ -62,16 +77,16 @@ public class Player extends MovableEntity {
         return y + height <= entity.y;
     }
 
-    public int getPosX(){
+    public int getPosX() {
         return this.x;
     }
 
-    public int getPosY(){
+    public int getPosY() {
         return this.y;
     }
 
-    public void moveDown(){
-        if(onPlatform){
+    public void moveDown() {
+        if (onPlatform) {
             onPlatform = false;
             this.y++;
         }

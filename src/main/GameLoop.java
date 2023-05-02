@@ -19,7 +19,7 @@ public class GameLoop implements Runnable {
     private Player dummy2 = new Player(300, 0);
     private Player dummy3 = new Player(500, 0);
     private ArrayList<Entity> platforms = new ArrayList<Entity>();
-    private ArrayList<Bullet> bullets = new ArrayList<Bullet>(); 
+    private ArrayList<Bullet> bullets = new ArrayList<Bullet>();
 
     GameLoop(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
@@ -34,21 +34,6 @@ public class GameLoop implements Runnable {
         platforms.add(new Entity(128, gamePanel.getHeight() - 96, gamePanel.getWidth() - 256, 32));
     }
 
-    private void createBullet(){
-        if(keyInputs.bulletLeft || keyInputs.bulletRight){
-
-            Bullet b = new Bullet(player.getPosX(), player.getPosY());
-            if(keyInputs.bulletLeft){
-                b.moveLeft();
-            }else if(keyInputs.bulletRight){
-                b.moveRight();
-            }
-
-            bullets.add(b);
-
-        }
-    }
-
     void start() {
         gameThread.start();
         gamePanel.addKeyListener(keyInputs);
@@ -56,26 +41,20 @@ public class GameLoop implements Runnable {
     }
 
     @Override
-    public void run(){
+    public void run() {
         double currentTime = System.nanoTime();
         double nextFrameNanoSeconds = currentTime + NANO_SECONDS_PER_FRAME;
-
-        int timer = 20;
 
         while (true) {
             if (currentTime >= nextFrameNanoSeconds) {
                 updatePlayerMovement();
-
-                if (timer == 0){
-                    createBullet();
-                    timer = 20;
-                }
-
-                updateBulletMovement();
-                updateCanvas();
                 updateDummyMovement();
 
-                timer--;
+                spawnPlayerBullets();
+                updateBulletMovement();
+
+                updateCanvas();
+
                 nextFrameNanoSeconds += NANO_SECONDS_PER_FRAME;
             }
 
@@ -83,7 +62,7 @@ public class GameLoop implements Runnable {
         }
     }
 
-    private void updateDummyMovement(){
+    private void updateDummyMovement() {
         dummy1.updatePosition(platforms);
         dummy2.updatePosition(platforms);
         dummy3.updatePosition(platforms);
@@ -104,20 +83,37 @@ public class GameLoop implements Runnable {
 
         if (keyInputs.moveUp) {
             player.jump();
-        } else if(keyInputs.moveDown){
+        } else if (keyInputs.moveDown) {
             player.moveDown();
         }
 
-        if (player.getPosY() >= 700){
+        if (player.getPosY() >= 700) {
             player.respawn();
-            
         }
 
         player.updatePosition(platforms);
     }
 
-    private void updateBulletMovement(){
-        for (Bullet b: bullets){
+    private void spawnPlayerBullets() {
+        if (keyInputs.bulletLeft || keyInputs.bulletRight) {
+            Bullet bullet = player.fireBullet();
+
+            if (bullet == null) {
+                return;
+            }
+
+            if (keyInputs.bulletLeft) {
+                bullet.moveLeft();
+            } else if (keyInputs.bulletRight) {
+                bullet.moveRight();
+            }
+
+            bullets.add(bullet);
+        }
+    }
+
+    private void updateBulletMovement() {
+        for (Bullet b : bullets) {
             b.updatePosition();
         }
     }
