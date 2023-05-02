@@ -28,4 +28,13 @@ class MovableEntity extends Entity {
         x += dx;
         y += dy;
     }
+
+    public double getPosY(){
+        return this.y;
+    }
+
+    public void respawn(){
+        x = 400;
+        y = 0;
+    }
 }
