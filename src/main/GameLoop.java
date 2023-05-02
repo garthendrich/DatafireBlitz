@@ -15,6 +15,9 @@ public class GameLoop implements Runnable {
     private KeyInputs keyInputs = new KeyInputs();
 
     private Player player = new Player(400, 0);
+    private Player dummy1 = new Player(200, 0);
+    private Player dummy2 = new Player(300, 0);
+    private Player dummy3 = new Player(500, 0);
     private ArrayList<Entity> platforms = new ArrayList<Entity>();
     private ArrayList<Bullet> bullets = new ArrayList<Bullet>(); 
 
@@ -70,6 +73,7 @@ public class GameLoop implements Runnable {
 
                 updateBulletMovement();
                 updateCanvas();
+                updateDummyMovement();
 
                 timer--;
                 nextFrameNanoSeconds += NANO_SECONDS_PER_FRAME;
@@ -77,6 +81,16 @@ public class GameLoop implements Runnable {
 
             currentTime = System.nanoTime();
         }
+    }
+
+    private void updateDummyMovement(){
+        dummy1.updatePosition(platforms);
+        dummy2.updatePosition(platforms);
+        dummy3.updatePosition(platforms);
+
+        if(dummy1.getPosY() >= 700) dummy1.respawn();
+        if(dummy2.getPosY() >= 700) dummy2.respawn();
+        if(dummy3.getPosY() >= 700) dummy3.respawn();
     }
 
     private void updatePlayerMovement() {
@@ -94,6 +108,11 @@ public class GameLoop implements Runnable {
             player.moveDown();
         }
 
+        if (player.getPosY() >= 700){
+            player.respawn();
+            
+        }
+
         player.updatePosition(platforms);
     }
 
@@ -108,6 +127,9 @@ public class GameLoop implements Runnable {
         entities.add(player);
         entities.addAll(platforms);
         entities.addAll(bullets);
+        entities.add(dummy1);
+        entities.add(dummy2);
+        entities.add(dummy3);
 
         gamePanel.setEntities(entities);
         gamePanel.repaint();
