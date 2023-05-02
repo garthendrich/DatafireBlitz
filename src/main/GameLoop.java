@@ -57,21 +57,21 @@ public class GameLoop implements Runnable {
         double currentTime = System.nanoTime();
         double nextFrameNanoSeconds = currentTime + NANO_SECONDS_PER_FRAME;
 
-        double nextBulletInterval = 4000000;
+        int timer = 20;
 
         while (true) {
             if (currentTime >= nextFrameNanoSeconds) {
                 updatePlayerMovement();
 
-                if (nextBulletInterval <= 0){
+                if (timer == 0){
                     createBullet();
-                    nextBulletInterval = 4000000;
+                    timer = 20;
                 }
-                
+
                 updateBulletMovement();
                 updateCanvas();
 
-                nextBulletInterval -= NANO_SECONDS_PER_FRAME;
+                timer--;
                 nextFrameNanoSeconds += NANO_SECONDS_PER_FRAME;
             }
 
