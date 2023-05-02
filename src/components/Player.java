@@ -12,6 +12,7 @@ public class Player extends MovableEntity {
     private double GRAVITY = 0.16;
 
     private boolean canJump = true;
+    private boolean onPlatform = false;
 
     public Player(int x, int y) {
         super(x, y, WIDTH, HEIGHT, MOVEMENT_SPEED);
@@ -26,6 +27,7 @@ public class Player extends MovableEntity {
 
     public void updatePosition(ArrayList<Entity> platforms) {
         boolean willApplyGravity = true;
+        onPlatform = false;
 
         for (Entity platform : platforms) {
             if (willStandOn(platform)) {
@@ -33,6 +35,7 @@ public class Player extends MovableEntity {
                 dy = 0;
                 willApplyGravity = false;
                 canJump = true;
+                onPlatform = true;
             }
         }
 
@@ -68,6 +71,9 @@ public class Player extends MovableEntity {
     }
 
     public void moveDown(){
-        this.y++;
+        if(onPlatform){
+            onPlatform = false;
+            this.y++;
+        }
     }
 }
