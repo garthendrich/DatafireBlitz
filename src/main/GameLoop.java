@@ -14,10 +14,10 @@ public class GameLoop implements Runnable {
     private Thread gameThread;
     private KeyInputs keyInputs = new KeyInputs();
 
-    private Player player = new Player(400, 0);
-    private Player dummy1 = new Player(200, 0);
-    private Player dummy2 = new Player(300, 0);
-    private Player dummy3 = new Player(500, 0);
+    private Player player = new Player(400, 0, 'A');
+    private Player dummy1 = new Player(200, 0, 'C');
+    private Player dummy2 = new Player(300, 0, 'C');
+    private Player dummy3 = new Player(500, 0, 'C');
     private ArrayList<Entity> platforms = new ArrayList<Entity>();
     private ArrayList<Bullet> bullets = new ArrayList<Bullet>();
 
@@ -53,6 +53,8 @@ public class GameLoop implements Runnable {
                 spawnPlayerBullets();
                 updateBulletMovement();
 
+                manageBulletCollision();
+
                 updateCanvas();
 
                 nextFrameNanoSeconds += NANO_SECONDS_PER_FRAME;
@@ -60,16 +62,6 @@ public class GameLoop implements Runnable {
 
             currentTime = System.nanoTime();
         }
-    }
-
-    private void updateDummyMovement() {
-        dummy1.updatePosition(platforms);
-        dummy2.updatePosition(platforms);
-        dummy3.updatePosition(platforms);
-
-        if(dummy1.getPosY() >= 700) dummy1.respawn();
-        if(dummy2.getPosY() >= 700) dummy2.respawn();
-        if(dummy3.getPosY() >= 700) dummy3.respawn();
     }
 
     private void updatePlayerMovement() {
@@ -94,6 +86,19 @@ public class GameLoop implements Runnable {
         player.updatePosition(platforms);
     }
 
+    private void updateDummyMovement() {
+        dummy1.updatePosition(platforms);
+        dummy2.updatePosition(platforms);
+        dummy3.updatePosition(platforms);
+
+        if (dummy1.getPosY() >= 700)
+            dummy1.respawn();
+        if (dummy2.getPosY() >= 700)
+            dummy2.respawn();
+        if (dummy3.getPosY() >= 700)
+            dummy3.respawn();
+    }
+
     private void spawnPlayerBullets() {
         if (keyInputs.bulletLeft || keyInputs.bulletRight) {
             Bullet bullet = player.fireBullet();
@@ -113,8 +118,25 @@ public class GameLoop implements Runnable {
     }
 
     private void updateBulletMovement() {
-        for (Bullet b : bullets) {
-            b.updatePosition();
+        for (Bullet bullet : bullets) {
+            bullet.updatePosition();
+        }
+    }
+
+    private void manageBulletCollision() {
+        ArrayList<Player> players = new ArrayList<Player>();
+        players.add(player);
+        players.add(dummy1);
+        players.add(dummy2);
+        players.add(dummy3);
+
+        for (Bullet bullet : bullets) {
+            for (Player player : players) {
+                if (bullet.isCollidingWith(player) && bullet.getTeam() != player.getTeam()) {
+                    player.respawn(); // ! temp
+                    // remove bullet from array
+                }
+            }
         }
     }
 

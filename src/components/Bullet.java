@@ -5,8 +5,16 @@ public class Bullet extends MovableEntity {
     private static int HEIGHT = 4;
     private static int MOVEMENT_SPEED = 8;
 
-    public Bullet(int x, int y) {
+    private char team;
+
+    public Bullet(int x, int y, char team) {
         super(x + (Player.WIDTH / 2), y + (Player.HEIGHT / 2), WIDTH, HEIGHT, MOVEMENT_SPEED);
+
+        this.team = team;
+    }
+
+    public char getTeam() {
+        return this.team;
     }
 
     // TODO: handle dispawning when bullet is outside canvas

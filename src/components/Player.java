@@ -10,16 +10,18 @@ public class Player extends MovableEntity {
     private static int MOVEMENT_SPEED = 3;
     private int JUMP_HEIGHT = 8;
     private double GRAVITY = 0.16;
-
     private double BPS = 4.0;
     private double SECONDS_PER_BULLET = 1.0 / BPS;
+
+    private char team;
+    private boolean onPlatform = false;
+    private boolean canJump = true;
     private double nextBulletFireSeconds = 0.0;
 
-    private boolean canJump = true;
-    private boolean onPlatform = false;
-
-    public Player(int x, int y) {
+    public Player(int x, int y, char team) {
         super(x, y, WIDTH, HEIGHT, MOVEMENT_SPEED);
+
+        this.team = team;
     }
 
     public void jump() {
@@ -34,7 +36,7 @@ public class Player extends MovableEntity {
 
         if (currentTimeSeconds >= nextBulletFireSeconds) {
             nextBulletFireSeconds = currentTimeSeconds + SECONDS_PER_BULLET;
-            return new Bullet(this.getPosX(), this.getPosY());
+            return new Bullet(this.getPosX(), this.getPosY(), this.getTeam());
         }
 
         return null;
@@ -90,5 +92,9 @@ public class Player extends MovableEntity {
             onPlatform = false;
             this.y++;
         }
+    }
+
+    public char getTeam() {
+        return this.team;
     }
 }
