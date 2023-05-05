@@ -10,12 +10,20 @@ public class Player extends MovableEntity {
     private static int MOVEMENT_SPEED = 3;
     private int JUMP_HEIGHT = 8;
     private double GRAVITY = 0.16;
+    private double BPS = 4.0;
+    private double SECONDS_PER_BULLET = 1.0 / BPS;
+    private double KNOCKBACK_FRICTION = 0.1;
 
-    private boolean canJump = true;
+    private char team;
     private boolean onPlatform = false;
+    private boolean canJump = true;
+    private double nextBulletFireSeconds = 0.0;
+    private double knockback;
 
-    public Player(int x, int y) {
+    public Player(int x, int y, char team) {
         super(x, y, WIDTH, HEIGHT, MOVEMENT_SPEED);
+
+        this.team = team;
     }
 
     public void jump() {
@@ -25,7 +33,25 @@ public class Player extends MovableEntity {
         }
     }
 
+    public Bullet fireBullet() {
+        double currentTimeSeconds = System.nanoTime() / 1_000_000_000.0;
+
+        if (currentTimeSeconds >= nextBulletFireSeconds) {
+            nextBulletFireSeconds = currentTimeSeconds + SECONDS_PER_BULLET;
+            return new Bullet(this.getPosX(), this.getPosY(), this.getTeam());
+        }
+
+        return null;
+    }
+
     public void updatePosition(ArrayList<Entity> platforms) {
+        manageGravity(platforms);
+        manageKnockback();
+
+        super.updatePosition();
+    }
+
+    private void manageGravity(ArrayList<Entity> platforms) {
         boolean willApplyGravity = true;
         onPlatform = false;
 
@@ -40,10 +66,20 @@ public class Player extends MovableEntity {
         }
 
         if (willApplyGravity) {
-            this.dy += GRAVITY;
+            dy += GRAVITY;
         }
+    }
 
-        super.updatePosition();
+    private void manageKnockback() {
+        x += knockback;
+
+        if (knockback < 0 && knockback < -KNOCKBACK_FRICTION) {
+            knockback += KNOCKBACK_FRICTION;
+        } else if (knockback > 0 && knockback > KNOCKBACK_FRICTION) {
+            knockback -= KNOCKBACK_FRICTION;
+        } else {
+            knockback = 0;
+        }
     }
 
     public boolean willStandOn(Entity entity) {
@@ -62,18 +98,26 @@ public class Player extends MovableEntity {
         return y + height <= entity.y;
     }
 
-    public int getPosX(){
-        return this.x;
-    }
-
-    public int getPosY(){
-        return this.y;
-    }
-
-    public void moveDown(){
-        if(onPlatform){
+    public void moveDown() {
+        if (onPlatform) {
             onPlatform = false;
             this.y++;
         }
+    }
+
+    public void knockback(int magnitude) {
+        this.knockback += magnitude;
+    }
+
+    public int getPosX() {
+        return this.x;
+    }
+
+    public int getPosY() {
+        return this.y;
+    }
+
+    public char getTeam() {
+        return this.team;
     }
 }
