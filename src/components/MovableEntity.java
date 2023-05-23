@@ -1,6 +1,6 @@
 package components;
 
-class MovableEntity extends Entity {
+abstract class MovableEntity extends Entity {
     private int movementSpeed;
 
     protected int dx = 0;
@@ -29,11 +29,11 @@ class MovableEntity extends Entity {
         y += dy;
     }
 
-    public int getPosY(){
+    public int getPosY() {
         return this.y;
     }
 
-    public void respawn(){
+    public void respawn() {
         x = 400;
         y = 0;
     }

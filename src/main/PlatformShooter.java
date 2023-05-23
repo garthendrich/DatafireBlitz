@@ -4,10 +4,16 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 
+import network.GameClient;
+import network.GameServer;
+
 // ! temporary class name
 public class PlatformShooter {
     static int WINDOW_WIDTH = 960;
     static int WINDOW_HEIGHT = 540;
+
+    static GameServer server;
+    static GameClient client;
 
     public static void main(String[] args) {
         JFrame lobby = homeLobby();
@@ -35,10 +41,10 @@ public class PlatformShooter {
         JPanel panel2 = new JPanel();
         panel1.setBounds(100, 0, 200, 200);
         panel2.setBounds(100, 200, 200, 100);
-        TextField username, address, portNumber;
+        TextField username, address, portNumberField;
         username = new TextField(20);
         address = new TextField(20);
-        portNumber = new TextField(20);
+        portNumberField = new TextField(20);
         JButton b1 = new JButton("Create Lobby");
         b1.setBounds(50, 100, 80, 30);
         b1.setBackground(Color.yellow);
@@ -46,12 +52,16 @@ public class PlatformShooter {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String name = username.getText();
-                String ip = address.getText();
-                String port = address.getText();
-                if (name.length() != 0 && ip.length() != 0 && port.length() != 0) {
+                String ipAddress = address.getText();
+                String portNumber = portNumberField.getText();
+                if (name.length() != 0 && ipAddress.length() != 0 && portNumber.length() != 0) {
                     // frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
                     frame.setVisible(false);
-                    waitingLobby(name, ip, port, "host");
+
+                    server = new GameServer(Integer.parseInt(portNumber));
+                    client = new GameClient(ipAddress, Integer.parseInt(portNumber), name);
+
+                    waitingLobby(name, ipAddress, portNumber, "host");
                 }
             }
         });
@@ -62,12 +72,15 @@ public class PlatformShooter {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String name = username.getText();
-                String ip = address.getText();
-                String port = address.getText();
-                if (name.length() != 0 && ip.length() != 0 && port.length() != 0) {
+                String ipAddress = address.getText();
+                String portNumber = portNumberField.getText();
+                if (name.length() != 0 && ipAddress.length() != 0 && portNumber.length() != 0) {
                     // frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
                     frame.setVisible(false);
-                    waitingLobby(name, ip, port, "client");
+
+                    client = new GameClient(ipAddress, Integer.parseInt(portNumber), name);
+
+                    waitingLobby(name, ipAddress, portNumber, "client");
                 }
             }
         });
@@ -78,13 +91,13 @@ public class PlatformShooter {
         number = new JLabel("Enter your port number: ");
         user.setLabelFor((username));
         addressLabel.setLabelFor(address);
-        number.setLabelFor(portNumber);
+        number.setLabelFor(portNumberField);
         panel1.add(user);
         panel1.add(username);
         panel1.add(addressLabel);
         panel1.add(address);
         panel1.add(number);
-        panel1.add(portNumber);
+        panel1.add(portNumberField);
         panel2.add(b1);
         panel2.add(b2);
         frame.add(panel1);
@@ -93,10 +106,12 @@ public class PlatformShooter {
     }
 
     private static void waitingLobby(String name, String ip, String port, String status) {
-        GameChat gameChat = new GameChat();
+        GameChat gameChat = new GameChat(client, name);
+
+        client.attachGameChat(gameChat);
 
         JFrame frame = new JFrame();
-        String[] players = { name, "Ji", "Andi", "Paw" };
+        String[] players = { name };
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(400, 400);
         frame.setLayout(null);
@@ -105,7 +120,7 @@ public class PlatformShooter {
         JLabel p = new JLabel("Port No.: " + port);
         p.setBounds(100, 50, 200, 50);
         String label = "";
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < players.length; i++)
             label += players[i] + " ";
         JLabel names = new JLabel("Players: " + label);
         names.setBounds(100, 100, 200, 50);

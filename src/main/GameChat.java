@@ -12,14 +12,20 @@ import javax.swing.JFrame;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-public class GameChat extends JFrame implements ActionListener{
+import network.GameClient;
+
+public class GameChat extends JFrame implements ActionListener {
     // Elements declaration
     JTextArea chatHistory;
     JTextField inputField;
     JButton btn;
+    GameClient client;
+    private String displayName;
 
-    GameChat(){
-        // set 
+    GameChat(GameClient client, String displayName) {
+        this.client = client;
+        this.displayName = displayName;
+        // set
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle("Chat");
         this.setLocationRelativeTo(null);
@@ -37,13 +43,21 @@ public class GameChat extends JFrame implements ActionListener{
         inputField = new JTextField();
         inputField.setPreferredSize(new Dimension(200, 30));
         inputField.setText("Message...");
-        inputField.addMouseListener(new MouseAdapter(){
+        inputField.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e){inputField.setText("");}
+            public void mouseClicked(MouseEvent e) {
+                inputField.setText("");
+            }
         });
-        inputField.addActionListener(new ActionListener(){
+        inputField.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){updateChat();}
+            public void actionPerformed(ActionEvent e) {
+                String tempStr = inputField.getText();
+
+                if (!tempStr.isBlank()) {
+                    client.send(displayName + ": " + tempStr);
+                }
+            }
         });
 
         // button for chat
@@ -61,39 +75,42 @@ public class GameChat extends JFrame implements ActionListener{
     }
 
     @Override
-    public void actionPerformed(ActionEvent evt){
-        if(evt.getSource() == btn){updateChat();}
-    }
-
-    public void updateChat(){
+    public void actionPerformed(ActionEvent evt) {
         String tempStr = inputField.getText();
+        if (evt.getSource() == btn) {
 
-        if(!tempStr.isBlank()){
-            chatHistory.append("\n" + tempStr);
-            inputField.setText("");
+            if (!tempStr.isBlank()) {
+                client.send(displayName + ": " + tempStr);
+            }
         }
     }
 
+    public void updateChat(String message) {
+        chatHistory.append("\n" + message);
+        inputField.setText("");
+    }
+
     // public static void main(String[] args){
-    //     GameChat gameChat = new GameChat();
-    // }    
+    // GameChat gameChat = new GameChat();
+    // }
 }
 
-
 /*
-    OTHER USEFUL METHODS:
-    // set string of text field -> input: String
-    textfield.setText("Text field");
-
-    // captures the text in the field
-    textfield.getText()
-
-    // determines if a textfield is editable we can use this to create two text fields
-    // the first being the text field that will show the history of the chat, then we set editable to false 
-    textfield.setEditable(<bool>); 
-
-    // for styling
-    textfield.setFont();
-    textfield.setForeground();
-    textfield.setCaretColor();
+ * OTHER USEFUL METHODS:
+ * // set string of text field -> input: String
+ * textfield.setText("Text field");
+ * 
+ * // captures the text in the field
+ * textfield.getText()
+ * 
+ * // determines if a textfield is editable we can use this to create two text
+ * fields
+ * // the first being the text field that will show the history of the chat,
+ * then we set editable to false
+ * textfield.setEditable(<bool>);
+ * 
+ * // for styling
+ * textfield.setFont();
+ * textfield.setForeground();
+ * textfield.setCaretColor();
  */
