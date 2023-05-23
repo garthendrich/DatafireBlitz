@@ -17,6 +17,9 @@ public class PlatformShooter {
 
         GameLoop gameLoop = new GameLoop(gamePanel);
         gameLoop.start();
+
+        GameChat gameChat = new GameChat();
+        
     }
 
     private static JFrame createWindow() {
