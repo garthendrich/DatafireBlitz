@@ -12,8 +12,6 @@ public class PlatformShooter {
     public static void main(String[] args) {
         JFrame lobby = homeLobby();
         lobby.setVisible(true);
-
-        GameChat gameChat = new GameChat();
     }
 
     private static JFrame createWindow() {
@@ -95,6 +93,8 @@ public class PlatformShooter {
     }
 
     private static void waitingLobby(String name, String ip, String port, String status) {
+        GameChat gameChat = new GameChat();
+
         JFrame frame = new JFrame();
         String[] players = { name, "Ji", "Andi", "Paw" };
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
