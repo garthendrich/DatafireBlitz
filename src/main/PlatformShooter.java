@@ -13,14 +13,10 @@ public class PlatformShooter {
         JFrame lobby = homeLobby(); 
         lobby.setVisible(true);
 
-        // JFrame window = createWindow();
-        // GamePanel gamePanel = new GamePanel();
-        // window.add(gamePanel);
+        GameLoop gameLoop = new GameLoop(gamePanel);
+        gameLoop.start();
 
-        // window.setVisible(true);
-
-        // GameLoop gameLoop = new GameLoop(gamePanel);
-        // gameLoop.start();
+        GameChat gameChat = new GameChat();
     }
 
     private static JFrame createWindow() {
