@@ -14,12 +14,12 @@ public class GameLoop implements Runnable {
     private Thread gameThread;
     private KeyInputs keyInputs = new KeyInputs();
 
-    private Player player = new Player(400, 0);
-    private Player dummy1 = new Player(200, 0);
-    private Player dummy2 = new Player(300, 0);
-    private Player dummy3 = new Player(500, 0);
+    private Player player = new Player(400, 0, 'A');
+    private Player dummy1 = new Player(200, 0, 'C');
+    private Player dummy2 = new Player(300, 0, 'C');
+    private Player dummy3 = new Player(500, 0, 'C');
     private ArrayList<Entity> platforms = new ArrayList<Entity>();
-    private ArrayList<Bullet> bullets = new ArrayList<Bullet>(); 
+    private ArrayList<Bullet> bullets = new ArrayList<Bullet>();
 
     GameLoop(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
@@ -34,21 +34,6 @@ public class GameLoop implements Runnable {
         platforms.add(new Entity(128, gamePanel.getHeight() - 96, gamePanel.getWidth() - 256, 32));
     }
 
-    private void createBullet(){
-        if(keyInputs.bulletLeft || keyInputs.bulletRight){
-
-            Bullet b = new Bullet(player.getPosX(), player.getPosY());
-            if(keyInputs.bulletLeft){
-                b.moveLeft();
-            }else if(keyInputs.bulletRight){
-                b.moveRight();
-            }
-
-            bullets.add(b);
-
-        }
-    }
-
     void start() {
         gameThread.start();
         gamePanel.addKeyListener(keyInputs);
@@ -56,41 +41,27 @@ public class GameLoop implements Runnable {
     }
 
     @Override
-    public void run(){
+    public void run() {
         double currentTime = System.nanoTime();
         double nextFrameNanoSeconds = currentTime + NANO_SECONDS_PER_FRAME;
-
-        int timer = 20;
 
         while (true) {
             if (currentTime >= nextFrameNanoSeconds) {
                 updatePlayerMovement();
-
-                if (timer == 0){
-                    createBullet();
-                    timer = 20;
-                }
-
-                updateBulletMovement();
-                updateCanvas();
                 updateDummyMovement();
 
-                timer--;
+                spawnPlayerBullets();
+                updateBulletMovement();
+
+                manageBulletCollision();
+
+                updateCanvas();
+
                 nextFrameNanoSeconds += NANO_SECONDS_PER_FRAME;
             }
 
             currentTime = System.nanoTime();
         }
-    }
-
-    private void updateDummyMovement(){
-        dummy1.updatePosition(platforms);
-        dummy2.updatePosition(platforms);
-        dummy3.updatePosition(platforms);
-
-        if(dummy1.getPosY() >= 700) dummy1.respawn();
-        if(dummy2.getPosY() >= 700) dummy2.respawn();
-        if(dummy3.getPosY() >= 700) dummy3.respawn();
     }
 
     private void updatePlayerMovement() {
@@ -104,22 +75,72 @@ public class GameLoop implements Runnable {
 
         if (keyInputs.moveUp) {
             player.jump();
-        } else if(keyInputs.moveDown){
+        } else if (keyInputs.moveDown) {
             player.moveDown();
         }
 
-        if (player.getPosY() >= 700){
+        if (player.getPosY() >= 700) {
             player.respawn();
-            
         }
 
         player.updatePosition(platforms);
     }
 
-    private void updateBulletMovement(){
-        for (Bullet b: bullets){
-            b.updatePosition();
+    private void updateDummyMovement() {
+        dummy1.updatePosition(platforms);
+        dummy2.updatePosition(platforms);
+        dummy3.updatePosition(platforms);
+
+        if (dummy1.getPosY() >= 700)
+            dummy1.respawn();
+        if (dummy2.getPosY() >= 700)
+            dummy2.respawn();
+        if (dummy3.getPosY() >= 700)
+            dummy3.respawn();
+    }
+
+    private void spawnPlayerBullets() {
+        if (keyInputs.bulletLeft || keyInputs.bulletRight) {
+            Bullet bullet = player.fireBullet();
+
+            if (bullet == null) {
+                return;
+            }
+
+            if (keyInputs.bulletLeft) {
+                bullet.moveLeft();
+            } else if (keyInputs.bulletRight) {
+                bullet.moveRight();
+            }
+
+            bullets.add(bullet);
         }
+    }
+
+    private void updateBulletMovement() {
+        for (Bullet bullet : bullets) {
+            bullet.updatePosition();
+        }
+    }
+
+    private void manageBulletCollision() {
+        ArrayList<Player> players = new ArrayList<Player>();
+        players.add(player);
+        players.add(dummy1);
+        players.add(dummy2);
+        players.add(dummy3);
+
+        ArrayList<Bullet> collidedBullets = new ArrayList<Bullet>();
+        for (Bullet bullet : bullets) {
+            for (Player player : players) {
+                if (bullet.isCollidingWith(player) && bullet.getTeam() != player.getTeam()) {
+                    player.knockback(bullet.getImpact());
+                    collidedBullets.add(bullet);
+                    break;
+                }
+            }
+        }
+        bullets.removeAll(collidedBullets);
     }
 
     private void updateCanvas() {
