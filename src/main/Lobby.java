@@ -71,7 +71,9 @@ public class Lobby extends JFrame{
         String ip = "10.2.10.3";
         String[] players = {name};
         String label = "";
-        for(int i=0; i<players.length; i++) label.concat(players[i]).concat(" ");
+        for (int i = 0; i < players.length; i++) {
+            label += players[i] + " ";
+        }
         JLabel ipLabel = new JLabel("IP Address: ".concat(ip), SwingConstants.CENTER);
         JLabel portLabel = new JLabel("Port Number: ".concat(port), SwingConstants.CENTER);
         JLabel playersLabel = new JLabel("Players: ".concat(label), SwingConstants.CENTER);
