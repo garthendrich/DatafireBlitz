@@ -6,7 +6,7 @@ import java.awt.event.*;
 
 // ! temporary class name
 public class PlatformShooter {
-    static int WINDOW_WIDTH = 960;
+    static int WINDOW_WIDTH = 960 + 225;
     static int WINDOW_HEIGHT = 540;
 
     public static void main(String[] args) {
@@ -21,6 +21,7 @@ public class PlatformShooter {
         window.setResizable(false);
         window.setLocationRelativeTo(null); // center window on screen
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.setLayout(new BoxLayout(window.getContentPane(), BoxLayout.PAGE_AXIS));
         return window;
     }
 
@@ -31,14 +32,17 @@ public class PlatformShooter {
         frame.setLayout(null);
         frame.setBackground(Color.gray);
         frame.setLocationRelativeTo(null);
+
         JPanel panel1 = new JPanel();
         JPanel panel2 = new JPanel();
         panel1.setBounds(100, 0, 200, 200);
         panel2.setBounds(100, 200, 200, 100);
+
         TextField username, address, portNumber;
         username = new TextField(20);
         address = new TextField(20);
         portNumber = new TextField(20);
+
         JButton b1 = new JButton("Create Lobby");
         b1.setBounds(50, 100, 80, 30);
         b1.setBackground(Color.yellow);
@@ -55,6 +59,7 @@ public class PlatformShooter {
                 }
             }
         });
+
         JButton b2 = new JButton("Join Lobby");
         b2.setBounds(50, 150, 80, 30);
         b2.setBackground(Color.green);
@@ -76,9 +81,11 @@ public class PlatformShooter {
         user = new JLabel("Enter player name: ");
         addressLabel = new JLabel("Enter your IP Addres: ");
         number = new JLabel("Enter your port number: ");
+
         user.setLabelFor((username));
         addressLabel.setLabelFor(address);
         number.setLabelFor(portNumber);
+
         panel1.add(user);
         panel1.add(username);
         panel1.add(addressLabel);
@@ -89,28 +96,78 @@ public class PlatformShooter {
         panel2.add(b2);
         frame.add(panel1);
         frame.add(panel2);
+
         return frame;
     }
 
-    private static void waitingLobby(String name, String ip, String port, String status) {
-        GameChat gameChat = new GameChat();
+    private static GamePanel createGamePanel(){
+        GamePanel gamePanel = new GamePanel();
+        gamePanel.setFocusable(true);
+        return gamePanel;
+    }
 
+    private static GameChat createGameChat(){
+        GameChat gameChat = new GameChat();
+        gameChat.setFocusable(true);
+        return gameChat;
+    }
+
+    private static void addListeners(GameChat gameChat, GamePanel gamePanel){
+        gamePanel.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {}
+            
+            @Override
+            public void keyReleased(KeyEvent e) {}
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_ENTER){
+                    gameChat.inputField.setText("");
+                    gameChat.inputField.requestFocusInWindow();
+                }
+            }
+        });
+
+        gameChat.inputField.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {}
+            
+            @Override
+            public void keyReleased(KeyEvent e) {}
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
+                    gamePanel.requestFocusInWindow();
+                }
+            }
+        });
+    }
+
+    private static void waitingLobby(String name, String ip, String port, String status) {
         JFrame frame = new JFrame();
         String[] players = { name, "Ji", "Andi", "Paw" };
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(400, 400);
         frame.setLayout(null);
+
         JLabel address = new JLabel("IP Address: " + ip);
         address.setBounds(100, 0, 200, 50);
+
         JLabel p = new JLabel("Port No.: " + port);
         p.setBounds(100, 50, 200, 50);
+
         String label = "";
         for (int i = 0; i < 4; i++)
             label += players[i] + " ";
+
         JLabel names = new JLabel("Players: " + label);
         names.setBounds(100, 100, 200, 50);
+
         JButton b1 = new JButton();
         b1.setBounds(100, 150, 200, 50);
+
         if (status == "host")
             b1.setText("Start Lobby");
         else
@@ -122,9 +179,14 @@ public class PlatformShooter {
                 // frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
                 frame.setVisible(false);
                 JFrame window = createWindow();
-                GamePanel gamePanel = new GamePanel();
-                window.add(gamePanel);
+                window.setLayout(new BorderLayout());
 
+                GameChat gameChat = createGameChat();       // chat box
+                GamePanel gamePanel = createGamePanel();    // game area
+                addListeners(gameChat, gamePanel);          // add key listeners for both
+
+                window.add(gamePanel);
+                window.add(gameChat, BorderLayout.EAST);
                 window.setVisible(true);
 
                 GameLoop gameLoop = new GameLoop(gamePanel);
