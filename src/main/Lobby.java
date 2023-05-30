@@ -10,7 +10,7 @@ public class Lobby extends JFrame{
 
     public Lobby(){
         this.setSize(WINDOW_WIDTH,WINDOW_HEIGHT);
-        this.setTitle("Data Fire Blitz");
+        this.setTitle("Datafire Blitz");
         this.setResizable(false);
         this.setLocationRelativeTo(null); // center window on screen
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
