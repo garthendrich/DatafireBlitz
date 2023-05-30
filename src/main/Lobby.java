@@ -14,6 +14,7 @@ public class Lobby extends JFrame{
         this.setResizable(false);
         this.setLocationRelativeTo(null); // center window on screen
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.PAGE_AXIS));
         this.setLayout(new GridBagLayout());
     }
 
@@ -175,11 +176,55 @@ public class Lobby extends JFrame{
 
     private void startGame(String name){
         this.getContentPane().removeAll();
+
         GamePanel gamePanel = new GamePanel();
+        gamePanel.setFocusable(true);
+
+        GameChat gameChat = new GameChat();
+        gameChat.setFocusable(true);
+
+        addListeners(gameChat, gamePanel);
+
         this.setLayout(new BorderLayout());
+
         this.add(gamePanel);
+        this.add(gameChat, BorderLayout.EAST);
+
         refreshFrame();
         GameLoop gameLoop = new GameLoop(gamePanel);
         gameLoop.start();
+    }
+
+    private void addListeners(GameChat gameChat, GamePanel gamePanel){
+        gamePanel.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {}
+            
+            @Override
+            public void keyReleased(KeyEvent e) {}
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_ENTER){
+                    gameChat.inputField.setText("");
+                    gameChat.inputField.requestFocusInWindow();
+                }
+            }
+        });
+
+        gameChat.inputField.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {}
+            
+            @Override
+            public void keyReleased(KeyEvent e) {}
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
+                    gamePanel.requestFocusInWindow();
+                }
+            }
+        });
     }
 }
