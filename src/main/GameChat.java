@@ -13,13 +13,20 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import network.Client;
+
 public class GameChat extends JPanel{
     // Elements declaration
     JTextArea chatHistory;
     JTextField inputField;
     JScrollPane scroller;
 
-    GameChat(){
+    String playerName;
+    Client client;
+
+    GameChat(String playerName) {
+        this.playerName = playerName;
+
         // set 
         this.setLayout(new FlowLayout());
         this.setPreferredSize(new Dimension(225, 540));
@@ -65,10 +72,16 @@ public class GameChat extends JPanel{
             @Override
             public void mouseClicked(MouseEvent e){newField.setText("");}
         });
-        newField.addActionListener(new ActionListener(){
+        newField.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){updateChat(inputField.getText());}
+            public void actionPerformed(ActionEvent e) {
+                client.send(playerName + ": " + inputField.getText());
+            }
         });
         return newField;
+    }
+
+    void attachClient(Client client) {
+        this.client = client;
     }
 }

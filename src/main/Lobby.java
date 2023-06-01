@@ -2,11 +2,19 @@ package main;
 
 import java.awt.*;
 import javax.swing.*;
+
+import network.Client;
+import network.Server;
+
 import java.awt.event.*;
 
 public class Lobby extends JFrame{
     static int WINDOW_WIDTH = 960;
     static int WINDOW_HEIGHT = 540;
+
+    Server server;
+    Client client;
+    GameChat gameChat;
 
     public Lobby(){
         this.setSize(WINDOW_WIDTH,WINDOW_HEIGHT);
@@ -27,7 +35,13 @@ public class Lobby extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 String name = usernameInput.getText();
-                if (name.length() > 0) lobbyPage(name);
+
+                server = new Server();
+                String ipAddress = server.getIpAddress();
+                int portNumber = server.getPortNumber();
+
+                if (name.length() > 0)
+                    lobbyPage(name, ipAddress, portNumber);
             }
         });
         JButton b2 = new JButton("Join Lobby");
@@ -66,17 +80,27 @@ public class Lobby extends JFrame{
         return;
     }
 
-    private void lobbyPage(String name){
+    private void lobbyPage(String name, String ipAddress, int portNumber) {
+        client = new Client(ipAddress, portNumber);
+
+        gameChat = new GameChat(name);
+        gameChat.setFocusable(true);
+
+        client.attachChat(gameChat);
+        gameChat.attachClient(client);
+
         this.getContentPane().removeAll();
-        String port = "3000";
-        String ip = "10.2.10.3";
+
+        // ! add chat UI to lobby page:
+        // this.add(gameChat, BorderLayout.EAST);
+
         String[] players = {name};
         String label = "";
         for (int i = 0; i < players.length; i++) {
             label += players[i] + " ";
         }
-        JLabel ipLabel = new JLabel("IP Address: ".concat(ip), SwingConstants.CENTER);
-        JLabel portLabel = new JLabel("Port Number: ".concat(port), SwingConstants.CENTER);
+        JLabel ipLabel = new JLabel("IP Address: " + ipAddress, SwingConstants.CENTER);
+        JLabel portLabel = new JLabel("Port Number: " + Integer.toString(portNumber), SwingConstants.CENTER);
         JLabel playersLabel = new JLabel("Players: ".concat(label), SwingConstants.CENTER);
         JLabel confirmation = new JLabel("Start the game?", SwingConstants.CENTER);
         JButton b1 = new JButton("Start");
@@ -132,11 +156,14 @@ public class Lobby extends JFrame{
         b1.setBackground(Color.green);
         b1.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
+            public void actionPerformed(ActionEvent e) {
                 String ipAddress = ipInput.getText();
                 String portNumber = portInput.getText();
-                if(ipAddress.length() > 0 && portNumber.length() > 0){
-                    lobbyPage(name);
+
+                // ! verify if input for port number is a number
+
+                if (ipAddress.length() > 0 && portNumber.length() > 0) {
+                    lobbyPage(name, ipAddress, Integer.parseInt(portNumber));
                 }
             }
         });
@@ -174,14 +201,15 @@ public class Lobby extends JFrame{
         this.repaint();
     }
 
-    private void startGame(String name){
+    private void startGame(String name) {
+        if (server != null) {
+            server.stopConnectionSearch();
+        }
+
         this.getContentPane().removeAll();
 
         GamePanel gamePanel = new GamePanel();
         gamePanel.setFocusable(true);
-
-        GameChat gameChat = new GameChat();
-        gameChat.setFocusable(true);
 
         addListeners(gameChat, gamePanel);
 
