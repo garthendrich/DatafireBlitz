@@ -7,6 +7,9 @@ import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 
+import main.GameChat;
+import main.Lobby;
+
 public class Player extends MovableEntity {
     static int WIDTH = 48;
     static int HEIGHT = 48;
@@ -16,6 +19,7 @@ public class Player extends MovableEntity {
     private double BPS = 4.0;
     private double SECONDS_PER_BULLET = 1.0 / BPS;
     private double KNOCKBACK_FRICTION = 0.1;
+    private static final double DAMAGE_AMPLIFIER_PERCENTAGE = 0.15;
 
     private int userId;
     private String userName;
@@ -28,6 +32,7 @@ public class Player extends MovableEntity {
     private double nextBulletFireSeconds = 0.0;
     private Bullet.Direction nextBulletDirection = Bullet.Direction.right;
     private double knockback;
+    private int damageTaken;
 
     Image player1 = new ImageIcon("src/assets/player1.gif").getImage();
     Image player2 = new ImageIcon("src/assets/player2.gif").getImage();
@@ -181,8 +186,20 @@ public class Player extends MovableEntity {
         return y + height <= entity.y;
     }
 
-    public void knockback(int magnitude) {
-        this.knockback += magnitude;
+    public void hitBy(Bullet bullet) {
+        int bulletDamage = bullet.getDamage();
+        int impact = bullet.getImpact();
+
+        damageTaken += bulletDamage + (damageTaken * DAMAGE_AMPLIFIER_PERCENTAGE);
+        knockback += impact + (impact * (damageTaken / 100.0));
+    }
+
+    public void respawn() {
+        x = (Lobby.WINDOW_WIDTH - GameChat.WIDTH - width) / 2;
+        y = -height;
+        dx = 0;
+        dy = 0;
+        damageTaken = 0;
     }
 
     public int getUserId() {
@@ -201,5 +218,4 @@ public class Player extends MovableEntity {
             graphics.drawImage(playerGif, (int) x + width, (int) y - 2, -width, height, null);
         }
     }
-
 }

@@ -39,9 +39,4 @@ class MovableEntity extends Entity {
 
         lastPositionUpdate = System.nanoTime();
     }
-
-    public void respawn(){
-        x = 400;
-        y = 0;
-    }
 }
