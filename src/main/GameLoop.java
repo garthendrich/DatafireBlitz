@@ -15,9 +15,6 @@ public class GameLoop implements Runnable {
     private KeyInputs keyInputs = new KeyInputs();
 
     private Player player = new Player(400, 0, 'A');
-    private Player dummy1 = new Player(200, 0, 'C');
-    private Player dummy2 = new Player(300, 0, 'C');
-    private Player dummy3 = new Player(500, 0, 'C');
     private ArrayList<Entity> platforms = new ArrayList<Entity>();
     private ArrayList<Bullet> bullets = new ArrayList<Bullet>();
 
@@ -48,7 +45,6 @@ public class GameLoop implements Runnable {
         while (true) {
             if (currentTime >= nextFrameNanoSeconds) {
                 updatePlayerMovement();
-                updateDummyMovement();
 
                 spawnPlayerBullets();
                 updateBulletMovement();
@@ -86,19 +82,6 @@ public class GameLoop implements Runnable {
         player.updatePosition(platforms);
     }
 
-    private void updateDummyMovement() {
-        dummy1.updatePosition(platforms);
-        dummy2.updatePosition(platforms);
-        dummy3.updatePosition(platforms);
-
-        if (dummy1.getPosY() >= 700)
-            dummy1.respawn();
-        if (dummy2.getPosY() >= 700)
-            dummy2.respawn();
-        if (dummy3.getPosY() >= 700)
-            dummy3.respawn();
-    }
-
     private void spawnPlayerBullets() {
         if (keyInputs.bulletLeft || keyInputs.bulletRight) {
             Bullet bullet = player.fireBullet();
@@ -126,9 +109,6 @@ public class GameLoop implements Runnable {
     private void manageBulletCollision() {
         ArrayList<Player> players = new ArrayList<Player>();
         players.add(player);
-        players.add(dummy1);
-        players.add(dummy2);
-        players.add(dummy3);
 
         ArrayList<Bullet> collidedBullets = new ArrayList<Bullet>();
         for (Bullet bullet : bullets) {
@@ -148,9 +128,6 @@ public class GameLoop implements Runnable {
         entities.add(player);
         entities.addAll(platforms);
         entities.addAll(bullets);
-        entities.add(dummy1);
-        entities.add(dummy2);
-        entities.add(dummy3);
 
         gamePanel.setEntities(entities);
         gamePanel.repaint();
