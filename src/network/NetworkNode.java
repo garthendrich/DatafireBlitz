@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import network.datatypes.Data;
+
 abstract class NetworkNode implements Runnable {
     private Thread dataManagerThread;
 
@@ -27,21 +29,31 @@ abstract class NetworkNode implements Runnable {
 
     @Override
     public void run() {
-        try {
-            String data = clientReader.readLine();
-            while (data != null) {
-                handleData(data);
-                data = clientReader.readLine();
+        while (true) {
+            Data data = awaitData();
+
+            if (data == null) {
+                break;
             }
-        } catch (IOException exception) {
-            exception.printStackTrace();
-            System.out.println("Error reading data from server: " + exception.getMessage());
+
+            handleData(data);
         }
     }
 
-    abstract void handleData(String data);
+    Data awaitData() {
+        try {
+            String serializedData = clientReader.readLine();
+            return Data.fromSerialized(serializedData);
+        } catch (IOException exception) {
+            exception.printStackTrace();
+            System.out.println("Error reading serialized data from stream: " + exception.getMessage());
+            return null;
+        }
+    }
 
-    public void send(String data) {
-        clientWriter.println(data);
+    abstract void handleData(Data data);
+
+    public void send(Data data) {
+        clientWriter.println(data.getSerialized());
     }
 }

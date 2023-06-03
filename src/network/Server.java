@@ -7,6 +7,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+import network.datatypes.Data;
+
 public class Server implements Runnable {
     private ServerSocket serverSocket;
     private ArrayList<ClientHandler> clientHandlers = new ArrayList<ClientHandler>();
@@ -69,7 +71,7 @@ public class Server implements Runnable {
         shutdown();
     }
 
-    void broadcast(String data) {
+    void broadcast(Data data) {
         for (ClientHandler clientHandler : clientHandlers) {
             if (clientHandler != null) {
                 clientHandler.send(data);

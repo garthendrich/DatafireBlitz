@@ -5,11 +5,21 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import main.GameChat;
+import network.datatypes.Data;
+import network.datatypes.MessageData;
+import network.datatypes.UserCreationData;
 
 public class Client extends NetworkNode {
     private GameChat chat;
 
-    public Client(String ipAddress, int portNumber) {
+    public Client(String userName, String ipAddress, int portNumber) {
+        connect(ipAddress, portNumber);
+
+        UserCreationData userCreationData = new UserCreationData(userName);
+        send(userCreationData);
+    }
+
+    private void connect(String ipAddress, int portNumber) {
         try {
             Socket clientSocket = new Socket(ipAddress, portNumber);
             start(clientSocket);
@@ -23,8 +33,11 @@ public class Client extends NetworkNode {
     }
 
     @Override
-    void handleData(String data) {
-        chat.updateChat(data);
+    void handleData(Data data) {
+        if (data instanceof MessageData) {
+            String formattedMessage = ((MessageData) data).getFormattedMessage();
+            chat.updateChat(formattedMessage);
+        }
     }
 
     public void attachChat(GameChat chat) {
