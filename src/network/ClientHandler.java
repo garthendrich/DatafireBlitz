@@ -3,13 +3,11 @@ package network;
 import java.net.Socket;
 
 class ClientHandler extends NetworkNode {
-    Server server;
+    private Server server;
 
     ClientHandler(Server server, Socket clientSocket) {
         this.server = server;
-        this.clientSocket = clientSocket;
-
-        start();
+        start(clientSocket);
     }
 
     @Override

@@ -7,31 +7,12 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 abstract class NetworkNode implements Runnable {
-    protected Thread dataManagerThread;
+    private Thread dataManagerThread;
 
-    protected Socket clientSocket;
     private BufferedReader clientReader;
-    protected PrintWriter clientWriter;
+    private PrintWriter clientWriter;
 
-    NetworkNode() {
-        dataManagerThread = new Thread(this);
-    }
-
-    /**
-     * This method is important because the subclasses of this class has to finish
-     * initializing clientSocket before the thread can start
-     */
-    void start() {
-        dataManagerThread.start();
-    }
-
-    @Override
-    public void run() {
-        initializeCharacterStreamHandlers();
-        startReceivingData();
-    }
-
-    private void initializeCharacterStreamHandlers() {
+    void start(Socket clientSocket) {
         try {
             clientReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             clientWriter = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -39,14 +20,17 @@ abstract class NetworkNode implements Runnable {
             exception.printStackTrace();
             System.out.println("Error initializing input and output handlers: " + exception.getMessage());
         }
+
+        dataManagerThread = new Thread(this);
+        dataManagerThread.start();
     }
 
-    private void startReceivingData() {
+    @Override
+    public void run() {
         try {
             String data = clientReader.readLine();
             while (data != null) {
                 handleData(data);
-
                 data = clientReader.readLine();
             }
         } catch (IOException exception) {

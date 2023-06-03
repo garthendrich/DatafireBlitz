@@ -7,17 +7,12 @@ import java.net.UnknownHostException;
 import main.GameChat;
 
 public class Client extends NetworkNode {
-    GameChat chat;
+    private GameChat chat;
 
     public Client(String ipAddress, int portNumber) {
-        connect(ipAddress, portNumber);
-
-        start();
-    }
-
-    private void connect(String ipAddress, int portNumber) {
         try {
-            clientSocket = new Socket(ipAddress, portNumber);
+            Socket clientSocket = new Socket(ipAddress, portNumber);
+            start(clientSocket);
         } catch (UnknownHostException exception) {
             exception.printStackTrace();
             System.out.println("Can't find IP Address: " + exception.getMessage());
