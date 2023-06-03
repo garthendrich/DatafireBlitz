@@ -7,7 +7,11 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+import main.GameLoop;
+import main.GameState;
 import network.datatypes.Data;
+import network.datatypes.PlayerCreationData;
+import network.datatypes.PlayerMovementData;
 
 public class Server implements Runnable {
     private ServerSocket serverSocket;
@@ -15,6 +19,8 @@ public class Server implements Runnable {
 
     private Thread serverThread;
     private boolean isSearchingForConnections = true;
+
+    GameState gameState;
 
     public Server() {
         initializeServerSocket();
@@ -71,6 +77,30 @@ public class Server implements Runnable {
         shutdown();
     }
 
+    public void startGame() {
+        gameState = new GameState();
+        new GameLoop(gameState);
+
+        for (ClientHandler clientHandler : clientHandlers) {
+            int userId = clientHandler.getUserId();
+            String userName = clientHandler.getUserName();
+
+            gameState.createPlayer(userId, userName);
+
+            PlayerCreationData playerCreationData = new PlayerCreationData(userId, userName);
+            broadcast(playerCreationData);
+        }
+
+    }
+
+    void update(Data data) {
+        if (data instanceof PlayerMovementData) {
+            gameState.movePlayer((PlayerMovementData) data);
+        }
+
+        broadcast(data);
+    }
+
     void broadcast(Data data) {
         for (ClientHandler clientHandler : clientHandlers) {
             if (clientHandler != null) {
@@ -79,7 +109,7 @@ public class Server implements Runnable {
         }
     }
 
-    public void shutdown() {
+    void shutdown() {
         if (serverSocket != null && !serverSocket.isClosed()) {
             try {
                 serverSocket.close();

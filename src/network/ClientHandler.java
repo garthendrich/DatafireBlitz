@@ -4,14 +4,21 @@ import java.net.Socket;
 
 import network.datatypes.Data;
 import network.datatypes.MessageData;
-import network.datatypes.UserCreationData;
+import network.datatypes.ClientCreationData;
+import network.datatypes.PlayerMovementData;
 
 class ClientHandler extends NetworkNode {
+    private static int nextUserId = 0;
+
     private Server server;
 
+    private int userId;
     private String userName;
 
     ClientHandler(Server server, Socket clientSocket) {
+        userId = nextUserId;
+        nextUserId++;
+
         this.server = server;
         start(clientSocket);
 
@@ -20,8 +27,8 @@ class ClientHandler extends NetworkNode {
 
     private void receiveUserData() {
         try {
-            UserCreationData data = (UserCreationData) awaitData();
-            this.userName = data.getName();
+            ClientCreationData data = (ClientCreationData) awaitData();
+            this.userName = data.getUserName();
         } catch (ClassCastException error) {
             error.printStackTrace();
             System.out.println("Error receiving new user data: " + error.getMessage());
@@ -34,6 +41,18 @@ class ClientHandler extends NetworkNode {
             ((MessageData) data).setSenderName(userName);
         }
 
-        server.broadcast(data);
+        if (data instanceof PlayerMovementData) {
+            ((PlayerMovementData) data).setUserId(userId);
+        }
+
+        server.update(data);
+    }
+
+    int getUserId() {
+        return userId;
+    }
+
+    String getUserName() {
+        return userName;
     }
 }

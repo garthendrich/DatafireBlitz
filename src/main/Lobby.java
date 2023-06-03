@@ -202,16 +202,24 @@ public class Lobby extends JFrame{
     }
 
     private void startGame(String name) {
-        if (server != null) {
-            server.stopConnectionSearch();
-        }
-
         this.getContentPane().removeAll();
 
         GamePanel gamePanel = new GamePanel();
         gamePanel.setFocusable(true);
 
+        new GameKeyInputs(gamePanel, client);
+
         addListeners(gameChat, gamePanel);
+
+        GameState gameState = new GameState();
+        client.attachGameState(gameState);
+
+        new GameLoop(gameState, gamePanel);
+
+        if (server != null) {
+            server.stopConnectionSearch();
+            server.startGame();
+        }
 
         this.setLayout(new BorderLayout());
 
@@ -219,8 +227,6 @@ public class Lobby extends JFrame{
         this.add(gameChat, BorderLayout.EAST);
 
         refreshFrame();
-        GameLoop gameLoop = new GameLoop(gamePanel);
-        gameLoop.start();
     }
 
     private void addListeners(GameChat gameChat, GamePanel gamePanel){

@@ -10,8 +10,10 @@ import components.Entity;
 class GamePanel extends JPanel {
     private ArrayList<Entity> entities = new ArrayList<Entity>();
 
-    void setEntities(ArrayList<Entity> entities) {
-        this.entities = entities;
+    void render(GameState gameState) {
+        this.entities = gameState.getEntities();
+
+        repaint();
     }
 
     @Override

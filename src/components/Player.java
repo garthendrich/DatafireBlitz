@@ -14,23 +14,63 @@ public class Player extends MovableEntity {
     private double SECONDS_PER_BULLET = 1.0 / BPS;
     private double KNOCKBACK_FRICTION = 0.1;
 
+    private int userId;
+    private String userName;
     private char team;
     private boolean onPlatform = false;
     private boolean canJump = true;
+    private boolean willJump = false;
+    private boolean willDrop = false;
     private double nextBulletFireSeconds = 0.0;
     private double knockback;
 
-    public Player(int x, int y, char team) {
+    public Player(int userId, String userName, int x, int y) {
         super(x, y, WIDTH, HEIGHT, MOVEMENT_SPEED);
 
-        this.team = team;
+        this.userId = userId;
+        this.userName = userName;
     }
 
-    public void jump() {
+    public void jumps() {
+        willJump = true;
+    }
+
+    public void drops() {
+        willDrop = true;
+    }
+
+    public void stopVerticalMovement() {
+        willJump = false;
+        willDrop = false;
+    }
+
+    private void jump() {
         if (canJump) {
             dy = -JUMP_HEIGHT;
             canJump = false;
         }
+    }
+
+    private void drop() {
+        if (onPlatform) {
+            onPlatform = false;
+            this.y++;
+        }
+    }
+
+    public void updatePosition(ArrayList<Entity> platforms) {
+        if (willJump) {
+            jump();
+        }
+
+        if (willDrop) {
+            drop();
+        }
+
+        manageGravity(platforms);
+        manageKnockback();
+
+        super.updatePosition();
     }
 
     public Bullet fireBullet() {
@@ -42,13 +82,6 @@ public class Player extends MovableEntity {
         }
 
         return null;
-    }
-
-    public void updatePosition(ArrayList<Entity> platforms) {
-        manageGravity(platforms);
-        manageKnockback();
-
-        super.updatePosition();
     }
 
     private void manageGravity(ArrayList<Entity> platforms) {
@@ -98,26 +131,27 @@ public class Player extends MovableEntity {
         return y + height <= entity.y;
     }
 
-    public void moveDown() {
-        if (onPlatform) {
-            onPlatform = false;
-            this.y++;
-        }
-    }
-
     public void knockback(int magnitude) {
         this.knockback += magnitude;
     }
 
+    public int getUserId() {
+        return userId;
+    }
+
     public int getPosX() {
-        return this.x;
+        return x;
     }
 
     public int getPosY() {
-        return this.y;
+        return y;
+    }
+
+    public void setTeam(char team) {
+        this.team = team;
     }
 
     public char getTeam() {
-        return this.team;
+        return team;
     }
 }
