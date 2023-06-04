@@ -10,6 +10,10 @@ import components.Entity;
 class GamePanel extends JPanel {
     private ArrayList<Entity> entities = new ArrayList<Entity>();
 
+    GamePanel() {
+        setFocusable(true);
+    }
+
     void render(GameState gameState) {
         this.entities = gameState.getEntities();
 

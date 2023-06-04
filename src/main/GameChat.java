@@ -30,6 +30,8 @@ public class GameChat extends JPanel{
         this.setPreferredSize(new Dimension(225, 540));
         this.setBackground(new Color(0,0,0,64));
         this.setVisible(true);
+        setFocusable(true);
+
         
         chatHistory = createChatHistory();          // chat text field
         scroller = createScroller(chatHistory);     // scroller

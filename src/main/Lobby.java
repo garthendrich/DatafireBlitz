@@ -205,7 +205,6 @@ public class Lobby extends JFrame{
         this.getContentPane().removeAll();
 
         GamePanel gamePanel = new GamePanel();
-        gamePanel.setFocusable(true);
 
         new GameKeyInputs(gamePanel, client);
 
@@ -225,6 +224,8 @@ public class Lobby extends JFrame{
 
         this.add(gamePanel);
         this.add(gameChat, BorderLayout.EAST);
+
+        gamePanel.requestFocusInWindow();
 
         refreshFrame();
     }
