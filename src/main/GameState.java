@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import components.Bullet;
 import components.Entity;
 import components.Player;
-import network.datatypes.PlayerMovementData;
+import network.datatypes.ToggleFireData;
+import network.datatypes.MovementData;
+import network.datatypes.PositionData;
 
 public class GameState {
     private ArrayList<Player> players = new ArrayList<Player>();
@@ -42,31 +44,47 @@ public class GameState {
         return null;
     }
 
-    public void movePlayer(PlayerMovementData userMovementData) {
-        int userId = userMovementData.getUserId();
-        int x = userMovementData.getX();
-        int y = userMovementData.getY();
-
+    public void updatePlayerPosition(PositionData positionData) {
+        int userId = positionData.getUserId();
         Player player = findPlayer(userId);
 
+        int x = positionData.getPlayerX();
+        int y = positionData.getPlayerY();
         player.setPosition(x, y);
+    }
 
-        PlayerMovementData.Direction direction = userMovementData.getDirection();
+    public void movePlayer(MovementData movementData) {
+        int userId = movementData.getUserId();
+        Player player = findPlayer(userId);
 
-        if (direction == PlayerMovementData.Direction.left) {
+        MovementData.Movement direction = movementData.getDirection();
+
+        if (direction == MovementData.Movement.left) {
             player.moveLeft();
-        } else if (direction == PlayerMovementData.Direction.right) {
+        } else if (direction == MovementData.Movement.right) {
             player.moveRight();
-        } else if (direction == PlayerMovementData.Direction.stopHorizontal) {
+        } else if (direction == MovementData.Movement.stopHorizontal) {
             player.stopHorizontalMovement();
         }
 
-        if (direction == PlayerMovementData.Direction.up) {
+        if (direction == MovementData.Movement.jump) {
             player.jumps();
-        } else if (direction == PlayerMovementData.Direction.down) {
+        } else if (direction == MovementData.Movement.drop) {
             player.drops();
-        } else if (direction == PlayerMovementData.Direction.stopHorizontal) {
+        } else if (direction == MovementData.Movement.stopVertical) {
             player.stopVerticalMovement();
+        }
+    }
+
+    public void toggleFire(ToggleFireData toggleFireData) {
+        int userId = toggleFireData.getUserId();
+        Player player = findPlayer(userId);
+
+        ToggleFireData.Status status = toggleFireData.getStatus();
+        if (status == ToggleFireData.Status.start) {
+            player.startFiringBullets();
+        } else if (status == ToggleFireData.Status.stop) {
+            player.stopFiringBullets();
         }
     }
 
@@ -80,23 +98,14 @@ public class GameState {
         }
     }
 
-    // void spawnPlayerBullets() {
-    // if (keyInputs.bulletLeft || keyInputs.bulletRight) {
-    // Bullet bullet = player.fireBullet();
-
-    // if (bullet == null) {
-    // return;
-    // }
-
-    // if (keyInputs.bulletLeft) {
-    // bullet.moveLeft();
-    // } else if (keyInputs.bulletRight) {
-    // bullet.moveRight();
-    // }
-
-    // bullets.add(bullet);
-    // }
-    // }
+    void spawnBullets() {
+        for (Player player : players) {
+            Bullet bullet = player.fireBullet();
+            if (bullet != null) {
+                bullets.add(bullet);
+            }
+        }
+    }
 
     void manageBulletCollision() {
         ArrayList<Bullet> collidedBullets = new ArrayList<Bullet>();
@@ -112,7 +121,7 @@ public class GameState {
         bullets.removeAll(collidedBullets);
     }
 
-    void respawnDeadPlayers() {
+    void respawnKnockedOutPlayers() {
         for (Player player : players) {
             if (player.getY() >= 700) {
                 player.respawn();

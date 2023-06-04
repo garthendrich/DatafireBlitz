@@ -6,23 +6,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import network.Client;
-import network.datatypes.PlayerMovementData;
+import network.datatypes.GameInputData;
 
 public class GameKeyInputs implements KeyListener {
-    private static enum Actions {
-        left, right, up, down
+    private static enum KeyInputs {
+        left, right, up, down, shoot
     }
 
-    private static HashMap<Integer, Actions> bindings = new HashMap<Integer, Actions>();
+    private static HashMap<Integer, KeyInputs> bindings;
 
     private Client client;
-    private ArrayList<Actions> actions = new ArrayList<Actions>();
+    private ArrayList<KeyInputs> inputs = new ArrayList<KeyInputs>();
 
     GameKeyInputs(GamePanel gamePanel, Client client) {
-        bindings.put(KeyEvent.VK_A, Actions.left);
-        bindings.put(KeyEvent.VK_D, Actions.right);
-        bindings.put(KeyEvent.VK_W, Actions.up);
-        bindings.put(KeyEvent.VK_S, Actions.down);
+        bindings = new HashMap<Integer, KeyInputs>();
+        bindings.put(KeyEvent.VK_A, KeyInputs.left);
+        bindings.put(KeyEvent.VK_D, KeyInputs.right);
+        bindings.put(KeyEvent.VK_W, KeyInputs.up);
+        bindings.put(KeyEvent.VK_S, KeyInputs.down);
+        bindings.put(KeyEvent.VK_J, KeyInputs.shoot);
 
         this.client = client;
         gamePanel.addKeyListener(this);
@@ -35,52 +37,72 @@ public class GameKeyInputs implements KeyListener {
     @Override
     public void keyPressed(KeyEvent event) {
         int keyCode = event.getKeyCode();
-        Actions activeAction = bindings.get(keyCode);
+        KeyInputs activeAction = bindings.get(keyCode);
 
-        if (!actions.contains(activeAction)) {
-            actions.add(activeAction);
-            sendUserMovementDataToClient();
+        if (!inputs.contains(activeAction)) {
+            inputs.add(activeAction);
+
+            sendInputToClient();
         }
     }
 
     @Override
     public void keyReleased(KeyEvent event) {
         int keyCode = event.getKeyCode();
-        Actions activeAction = bindings.get(keyCode);
-        actions.remove(activeAction);
-        sendUserMovementDataToClient();
+        KeyInputs activeAction = bindings.get(keyCode);
+        inputs.remove(activeAction);
+
+        sendInputToClient();
     }
 
-    private void sendUserMovementDataToClient() {
-        Boolean left = actions.contains(Actions.left);
-        Boolean right = actions.contains(Actions.right);
-        Boolean up = actions.contains(Actions.up);
-        Boolean down = actions.contains(Actions.down);
+    private void sendInputToClient() {
+        // ! to fix: extra unnecessary input data are being sent.
+        // e.g. player moves to the left but client also sends a signal for player to
+        // stop firing even though the player is already not firing bullets
 
-        PlayerMovementData userMovementData;
+        GameInputData horizontalInputData = getHorizontalInputData();
+        client.send(horizontalInputData);
+
+        GameInputData verticalInputData = getVerticalInputData();
+        client.send(verticalInputData);
+
+        GameInputData shootInputData = getShootInputData();
+        client.send(shootInputData);
+    }
+
+    private GameInputData getHorizontalInputData() {
+        Boolean left = inputs.contains(KeyInputs.left);
+        Boolean right = inputs.contains(KeyInputs.right);
+
         if (left && !right) {
-            userMovementData = new PlayerMovementData(PlayerMovementData.Direction.left);
+            return new GameInputData(GameInputData.Input.moveLeft);
         } else if (right && !left) {
-            userMovementData = new PlayerMovementData(PlayerMovementData.Direction.right);
+            return new GameInputData(GameInputData.Input.moveRight);
         } else {
-            userMovementData = new PlayerMovementData(PlayerMovementData.Direction.stopHorizontal);
+            return new GameInputData(GameInputData.Input.stopHorizontal);
         }
+    }
 
-        if (userMovementData != null) {
-            client.send(userMovementData);
-        }
+    private GameInputData getVerticalInputData() {
+        Boolean up = inputs.contains(KeyInputs.up);
+        Boolean down = inputs.contains(KeyInputs.down);
 
-        userMovementData = null;
         if (up && !down) {
-            userMovementData = new PlayerMovementData(PlayerMovementData.Direction.up);
+            return new GameInputData(GameInputData.Input.jump);
         } else if (down && !up) {
-            userMovementData = new PlayerMovementData(PlayerMovementData.Direction.down);
+            return new GameInputData(GameInputData.Input.drop);
         } else {
-            userMovementData = new PlayerMovementData(PlayerMovementData.Direction.stopVertical);
+            return new GameInputData(GameInputData.Input.stopVertical);
         }
+    }
 
-        if (userMovementData != null) {
-            client.send(userMovementData);
+    private GameInputData getShootInputData() {
+        Boolean shoot = inputs.contains(KeyInputs.shoot);
+
+        if (shoot) {
+            return new GameInputData(GameInputData.Input.startShoot);
+        } else {
+            return new GameInputData(GameInputData.Input.stopShoot);
         }
     }
 }

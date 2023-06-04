@@ -1,9 +1,13 @@
 package components;
 
 public class Bullet extends MovableEntity {
+    static enum Direction {
+        left, right
+    }
+
     private static int WIDTH = 16;
     private static int HEIGHT = 4;
-    private static int MOVEMENT_SPEED = 8;
+    private static int MOVEMENT_SPEED = 16;
 
     private char team;
     private int impact = 4;

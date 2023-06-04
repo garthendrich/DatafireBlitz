@@ -4,8 +4,9 @@ import java.net.Socket;
 
 import network.datatypes.Data;
 import network.datatypes.MessageData;
+import network.datatypes.GameInputData;
 import network.datatypes.ClientCreationData;
-import network.datatypes.PlayerMovementData;
+import network.datatypes.PlayerOwnedData;
 
 class ClientHandler extends NetworkNode {
     private static int nextUserId = 0;
@@ -39,10 +40,8 @@ class ClientHandler extends NetworkNode {
     void handleData(Data data) {
         if (data instanceof MessageData) {
             ((MessageData) data).setSenderName(userName);
-        }
-
-        if (data instanceof PlayerMovementData) {
-            ((PlayerMovementData) data).setUserId(userId);
+        } else if (data instanceof GameInputData) {
+            ((PlayerOwnedData) data).setUserId(userId);
         }
 
         server.update(data);

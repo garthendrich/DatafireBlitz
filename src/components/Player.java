@@ -21,7 +21,9 @@ public class Player extends MovableEntity {
     private boolean canJump = true;
     private boolean willJump = false;
     private boolean willDrop = false;
+    private boolean willFireBullet = false;
     private double nextBulletFireSeconds = 0.0;
+    private Bullet.Direction nextBulletDirection = Bullet.Direction.right;
     private double knockback;
 
     public Player(int userId, String userName, int x, int y) {
@@ -29,6 +31,18 @@ public class Player extends MovableEntity {
 
         this.userId = userId;
         this.userName = userName;
+    }
+
+    @Override
+    public void moveLeft() {
+        super.moveLeft();
+        nextBulletDirection = Bullet.Direction.left;
+    }
+
+    @Override
+    public void moveRight() {
+        super.moveRight();
+        nextBulletDirection = Bullet.Direction.right;
     }
 
     public void jumps() {
@@ -58,6 +72,14 @@ public class Player extends MovableEntity {
         }
     }
 
+    public void startFiringBullets() {
+        willFireBullet = true;
+    }
+
+    public void stopFiringBullets() {
+        willFireBullet = false;
+    }
+
     public void updatePosition(ArrayList<Entity> platforms) {
         if (willJump) {
             jump();
@@ -74,11 +96,23 @@ public class Player extends MovableEntity {
     }
 
     public Bullet fireBullet() {
+        if (!willFireBullet) {
+            return null;
+        }
+
         double currentTimeSeconds = System.nanoTime() / 1_000_000_000.0;
 
         if (currentTimeSeconds >= nextBulletFireSeconds) {
             nextBulletFireSeconds = currentTimeSeconds + SECONDS_PER_BULLET;
-            return new Bullet(this.x, this.y, this.team);
+            Bullet bullet = new Bullet(this.x, this.y, this.team);
+
+            if (nextBulletDirection == Bullet.Direction.right) {
+                bullet.moveRight();
+            } else {
+                bullet.moveLeft();
+            }
+
+            return bullet;
         }
 
         return null;

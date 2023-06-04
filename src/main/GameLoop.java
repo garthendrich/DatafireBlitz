@@ -36,9 +36,9 @@ public class GameLoop implements Runnable {
         while (true) {
             if (currentTime >= nextFrameNanoSeconds) {
                 gameState.updateEntityPositions();
-                // gameState.spawnPlayerBullets();
+                gameState.spawnBullets();
                 gameState.manageBulletCollision();
-                gameState.respawnDeadPlayers();
+                gameState.respawnKnockedOutPlayers();
 
                 if (gamePanel != null) {
                     gamePanel.render(gameState);

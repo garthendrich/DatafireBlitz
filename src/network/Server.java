@@ -12,7 +12,10 @@ import main.GameLoop;
 import main.GameState;
 import network.datatypes.Data;
 import network.datatypes.PlayerCreationData;
-import network.datatypes.PlayerMovementData;
+import network.datatypes.PositionData;
+import network.datatypes.ToggleFireData;
+import network.datatypes.GameInputData;
+import network.datatypes.MovementData;
 
 public class Server implements Runnable {
     private ServerSocket serverSocket;
@@ -21,7 +24,7 @@ public class Server implements Runnable {
     private Thread serverThread;
     private boolean isSearchingForConnections = true;
 
-    GameState gameState;
+    GameState serverGameState;
 
     public Server() {
         initializeServerSocket();
@@ -79,14 +82,14 @@ public class Server implements Runnable {
     }
 
     public void startGame() {
-        gameState = new GameState();
-        new GameLoop(gameState);
+        serverGameState = new GameState();
+        new GameLoop(serverGameState);
 
         for (ClientHandler clientHandler : clientHandlers) {
             int userId = clientHandler.getUserId();
             String userName = clientHandler.getUserName();
 
-            gameState.createPlayer(userId, userName);
+            serverGameState.createPlayer(userId, userName);
 
             PlayerCreationData playerCreationData = new PlayerCreationData(userId, userName);
             broadcast(playerCreationData);
@@ -95,22 +98,53 @@ public class Server implements Runnable {
     }
 
     void update(Data data) {
-        if (data instanceof PlayerMovementData) {
-            PlayerMovementData playerMovementData = (PlayerMovementData) data;
+        if (data instanceof GameInputData) {
+            GameInputData gameInputData = (GameInputData) data;
 
-            int userId = playerMovementData.getUserId();
-            Player serverPlayer = gameState.findPlayer(userId);
-            int serverPlayerX = serverPlayer.getX();
-            int serverPlayerY = serverPlayer.getY();
+            PositionData actionData = null;
 
-            playerMovementData.setPosition(serverPlayerX, serverPlayerY);
+            int userId = gameInputData.getUserId();
+            GameInputData.Input input = gameInputData.getInput();
 
-            gameState.movePlayer(playerMovementData);
+            if (input == GameInputData.Input.moveLeft) {
+                actionData = new MovementData(userId, MovementData.Movement.left);
+            } else if (input == GameInputData.Input.moveRight) {
+                actionData = new MovementData(userId, MovementData.Movement.right);
+            } else if (input == GameInputData.Input.jump) {
+                actionData = new MovementData(userId, MovementData.Movement.jump);
+            } else if (input == GameInputData.Input.stopHorizontal) {
+                actionData = new MovementData(userId, MovementData.Movement.stopHorizontal);
+            } else if (input == GameInputData.Input.stopVertical) {
+                actionData = new MovementData(userId, MovementData.Movement.stopVertical);
+            } else if (input == GameInputData.Input.drop) {
+                actionData = new MovementData(userId, MovementData.Movement.drop);
+            } else if (input == GameInputData.Input.startShoot) {
+                actionData = new ToggleFireData(userId, ToggleFireData.Status.start);
+            } else if (input == GameInputData.Input.stopShoot) {
+                actionData = new ToggleFireData(userId, ToggleFireData.Status.stop);
+            }
 
-            data = (Data) playerMovementData;
+            if (actionData instanceof MovementData) {
+                serverGameState.movePlayer((MovementData) actionData);
+            } else if (actionData instanceof ToggleFireData) {
+                serverGameState.toggleFire((ToggleFireData) actionData);
+            }
+
+            syncPositionData(actionData);
+            broadcast(actionData);
+            return;
         }
 
         broadcast(data);
+    }
+
+    private void syncPositionData(PositionData positionData) {
+        int userId = positionData.getUserId();
+        Player serverPlayer = serverGameState.findPlayer(userId);
+
+        int serverPlayerX = serverPlayer.getX();
+        int serverPlayerY = serverPlayer.getY();
+        positionData.setPlayerPosition(serverPlayerX, serverPlayerY);
     }
 
     void broadcast(Data data) {
