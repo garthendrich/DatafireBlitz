@@ -7,20 +7,28 @@ public class PlayerMovementData extends Data {
 
     private int userId;
     private Direction direction;
+    private int x;
+    private int y;
 
-    // data to receive by client handlers / server
-    public PlayerMovementData(Direction direction) {
-        this.direction = direction;
+    // for data serialization
+    public PlayerMovementData(int userId, Direction direction, int x, int y) {
+        this(direction);
+        this.userId = userId;
+        this.x = x;
+        this.y = y;
     }
 
-    // data to receive by clients
-    public PlayerMovementData(int userId, Direction direction) {
-        this.userId = userId;
+    public PlayerMovementData(Direction direction) {
         this.direction = direction;
     }
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    public void setPosition(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 
     public int getUserId() {
@@ -29,5 +37,13 @@ public class PlayerMovementData extends Data {
 
     public Direction getDirection() {
         return direction;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
     }
 }

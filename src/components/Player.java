@@ -78,7 +78,7 @@ public class Player extends MovableEntity {
 
         if (currentTimeSeconds >= nextBulletFireSeconds) {
             nextBulletFireSeconds = currentTimeSeconds + SECONDS_PER_BULLET;
-            return new Bullet(this.getPosX(), this.getPosY(), this.getTeam());
+            return new Bullet(this.x, this.y, this.team);
         }
 
         return null;
@@ -137,14 +137,6 @@ public class Player extends MovableEntity {
 
     public int getUserId() {
         return userId;
-    }
-
-    public int getPosX() {
-        return x;
-    }
-
-    public int getPosY() {
-        return y;
     }
 
     public void setTeam(char team) {

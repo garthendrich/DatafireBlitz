@@ -25,7 +25,7 @@ abstract public class Data {
         if (this instanceof PlayerMovementData) {
             PlayerMovementData data = (PlayerMovementData) this;
             return String.join(",", DataTypes.playerMovement.toString(), Integer.toString(data.getUserId()),
-                    data.getDirection().toString());
+                    data.getDirection().toString(), Integer.toString(data.getX()), Integer.toString(data.getY()));
         }
 
         System.out.println("Error serializing data " + this.getClass().getSimpleName());
@@ -49,7 +49,8 @@ abstract public class Data {
 
         if (dataChunks[0].equals(DataTypes.playerMovement.toString())) {
             return new PlayerMovementData(Integer.parseInt(dataChunks[1]),
-                    PlayerMovementData.Direction.valueOf(dataChunks[2]));
+                    PlayerMovementData.Direction.valueOf(dataChunks[2]), Integer.parseInt(dataChunks[3]),
+                    Integer.parseInt(dataChunks[4]));
         }
 
         System.out.println("Error deserializing data " + serializedData);

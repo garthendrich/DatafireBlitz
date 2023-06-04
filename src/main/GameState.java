@@ -33,7 +33,7 @@ public class GameState {
         }
     }
 
-    private Player findPlayer(int userId) {
+    public Player findPlayer(int userId) {
         for (Player player : players) {
             if (player.getUserId() == userId) {
                 return player;
@@ -44,7 +44,12 @@ public class GameState {
 
     public void movePlayer(PlayerMovementData userMovementData) {
         int userId = userMovementData.getUserId();
+        int x = userMovementData.getX();
+        int y = userMovementData.getY();
+
         Player player = findPlayer(userId);
+
+        player.setPosition(x, y);
 
         PlayerMovementData.Direction direction = userMovementData.getDirection();
 
@@ -109,7 +114,7 @@ public class GameState {
 
     void respawnDeadPlayers() {
         for (Player player : players) {
-            if (player.getPosY() >= 700) {
+            if (player.getY() >= 700) {
                 player.respawn();
             }
         }

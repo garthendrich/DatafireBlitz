@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+import components.Player;
 import main.GameLoop;
 import main.GameState;
 import network.datatypes.Data;
@@ -95,7 +96,18 @@ public class Server implements Runnable {
 
     void update(Data data) {
         if (data instanceof PlayerMovementData) {
-            gameState.movePlayer((PlayerMovementData) data);
+            PlayerMovementData playerMovementData = (PlayerMovementData) data;
+
+            int userId = playerMovementData.getUserId();
+            Player serverPlayer = gameState.findPlayer(userId);
+            int serverPlayerX = serverPlayer.getX();
+            int serverPlayerY = serverPlayer.getY();
+
+            playerMovementData.setPosition(serverPlayerX, serverPlayerY);
+
+            gameState.movePlayer(playerMovementData);
+
+            data = (Data) playerMovementData;
         }
 
         broadcast(data);

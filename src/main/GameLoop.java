@@ -8,14 +8,14 @@ public class GameLoop implements Runnable {
     private GamePanel gamePanel;
     private GameState gameState;
 
-    public GameLoop(GameState gameState) {
-        this.gameState = gameState;
-
-        start();
+    // to be used by client user
+    public GameLoop(GameState gameState, GamePanel gamePanel) {
+        this(gameState);
+        this.gamePanel = gamePanel;
     }
 
-    public GameLoop(GameState gameState, GamePanel gamePanel) {
-        this.gamePanel = gamePanel;
+    // to be used by host user
+    public GameLoop(GameState gameState) {
         this.gameState = gameState;
 
         start();
