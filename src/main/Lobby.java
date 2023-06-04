@@ -9,8 +9,8 @@ import network.Server;
 import java.awt.event.*;
 
 public class Lobby extends JFrame{
-    static int WINDOW_WIDTH = 960;
-    static int WINDOW_HEIGHT = 540;
+    public static int WINDOW_WIDTH = 960;
+    public static int WINDOW_HEIGHT = 540;
 
     Server server;
     Client client;

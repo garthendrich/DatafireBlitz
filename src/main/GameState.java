@@ -107,18 +107,14 @@ public class GameState {
         }
     }
 
-    void manageBulletCollision() {
-        ArrayList<Bullet> collidedBullets = new ArrayList<Bullet>();
+    void removeOffscreenBullets() {
+        ArrayList<Bullet> offscreenBullets = new ArrayList<Bullet>();
         for (Bullet bullet : bullets) {
-            for (Player player : players) {
-                if (bullet.isCollidingWith(player) && bullet.getTeam() != player.getTeam()) {
-                    player.knockback(bullet.getImpact());
-                    collidedBullets.add(bullet);
-                    break;
-                }
+            if (bullet.isOutsideWindow()) {
+                offscreenBullets.add(bullet);
             }
         }
-        bullets.removeAll(collidedBullets);
+        bullets.removeAll(offscreenBullets);
     }
 
     void respawnKnockedOutPlayers() {

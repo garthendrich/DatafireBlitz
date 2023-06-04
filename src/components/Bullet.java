@@ -1,5 +1,7 @@
 package components;
 
+import main.Lobby;
+
 public class Bullet extends MovableEntity {
     static enum Direction {
         left, right
@@ -28,5 +30,11 @@ public class Bullet extends MovableEntity {
         }
 
         return -this.impact;
+    }
+
+    public boolean isOutsideWindow() {
+        Boolean pastLeft = x + width < 0;
+        Boolean pastRight = x > Lobby.WINDOW_WIDTH;
+        return pastLeft || pastRight;
     }
 }
