@@ -13,6 +13,7 @@ import main.GameState;
 import network.datatypes.Data;
 import network.datatypes.PlayerCreationData;
 import network.datatypes.PositionData;
+import network.datatypes.StartGameData;
 import network.datatypes.ToggleFireData;
 import network.datatypes.GameInputData;
 import network.datatypes.MovementData;
@@ -82,6 +83,8 @@ public class Server implements Runnable {
     }
 
     public void startGame() {
+        broadcast(new StartGameData());
+
         serverGameState = new GameState();
         new GameLoop(serverGameState);
 

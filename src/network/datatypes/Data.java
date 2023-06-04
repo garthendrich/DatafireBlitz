@@ -2,13 +2,17 @@ package network.datatypes;
 
 abstract public class Data {
     private static enum DataType {
-        clientCreation, playerCreation, gameInput, movement, fire, message
+        clientCreation, startGame, playerCreation, gameInput, movement, fire, message
     }
 
     public String getSerialized() {
         if (this instanceof ClientCreationData) {
             ClientCreationData data = (ClientCreationData) this;
             return String.join(",", DataType.clientCreation.toString(), data.getUserName());
+        }
+
+        if (this instanceof StartGameData) {
+            return String.join(",", DataType.startGame.toString());
         }
 
         if (this instanceof MessageData) {
@@ -50,6 +54,10 @@ abstract public class Data {
 
         if (dataChunks[0].equals(DataType.clientCreation.toString())) {
             return new ClientCreationData(dataChunks[1]);
+        }
+
+        if (dataChunks[0].equals(DataType.startGame.toString())) {
+            return new StartGameData();
         }
 
         if (dataChunks[0].equals(DataType.message.toString())) {
