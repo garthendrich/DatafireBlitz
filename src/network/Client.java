@@ -45,7 +45,8 @@ public class Client extends NetworkNode {
             chat.updateChat(formattedMessage);
         } else if (data instanceof PlayerCreationData) {
             PlayerCreationData playerCreationData = (PlayerCreationData) data;
-            gameState.createPlayer(playerCreationData.getUserId(), playerCreationData.getUserName());
+            gameState.createPlayer(playerCreationData.getUserId(), playerCreationData.getUserName(),
+                    playerCreationData.getUserTeam());
         } else if (data instanceof MovementData) {
             gameState.updatePlayerPosition((PositionData) data);
             gameState.movePlayer((MovementData) data);

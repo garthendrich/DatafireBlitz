@@ -16,7 +16,7 @@ public class Player extends MovableEntity {
 
     private int userId;
     private String userName;
-    private char team;
+    private char userTeam;
     private boolean onPlatform = false;
     private boolean canJump = true;
     private boolean willJump = false;
@@ -26,11 +26,12 @@ public class Player extends MovableEntity {
     private Bullet.Direction nextBulletDirection = Bullet.Direction.right;
     private double knockback;
 
-    public Player(int userId, String userName, int x, int y) {
+    public Player(int userId, String userName, char userTeam, int x, int y) {
         super(x, y, WIDTH, HEIGHT, MOVEMENT_SPEED);
 
         this.userId = userId;
         this.userName = userName;
+        this.userTeam = userTeam;
     }
 
     @Override
@@ -104,7 +105,7 @@ public class Player extends MovableEntity {
 
         if (currentTimeSeconds >= nextBulletFireSeconds) {
             nextBulletFireSeconds = currentTimeSeconds + SECONDS_PER_BULLET;
-            Bullet bullet = new Bullet(this.x, this.y, this.team);
+            Bullet bullet = new Bullet(this.x, this.y, this.userTeam);
 
             if (nextBulletDirection == Bullet.Direction.right) {
                 bullet.moveRight();
@@ -173,11 +174,7 @@ public class Player extends MovableEntity {
         return userId;
     }
 
-    public void setTeam(char team) {
-        this.team = team;
-    }
-
-    public char getTeam() {
-        return team;
+    public char getUserTeam() {
+        return userTeam;
     }
 }

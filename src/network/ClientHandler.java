@@ -15,6 +15,7 @@ class ClientHandler extends NetworkNode {
 
     private int userId;
     private String userName;
+    private char userTeam;
 
     ClientHandler(Server server, Socket clientSocket) {
         userId = nextUserId;
@@ -53,5 +54,13 @@ class ClientHandler extends NetworkNode {
 
     String getUserName() {
         return userName;
+    }
+
+    void setUserTeam(char userTeam) {
+        this.userTeam = userTeam;
+    }
+
+    char getUserTeam() {
+        return userTeam;
     }
 }

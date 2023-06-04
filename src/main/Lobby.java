@@ -217,6 +217,7 @@ public class Lobby extends JFrame{
 
         if (server != null) {
             server.stopConnectionSearch();
+            server.setVaryingTeams();
             server.startGame();
         }
 

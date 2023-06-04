@@ -88,13 +88,21 @@ public class Server implements Runnable {
         for (ClientHandler clientHandler : clientHandlers) {
             int userId = clientHandler.getUserId();
             String userName = clientHandler.getUserName();
+            char userTeam = clientHandler.getUserTeam();
 
-            serverGameState.createPlayer(userId, userName);
+            serverGameState.createPlayer(userId, userName, userTeam);
 
-            PlayerCreationData playerCreationData = new PlayerCreationData(userId, userName);
+            PlayerCreationData playerCreationData = new PlayerCreationData(userId, userName, userTeam);
             broadcast(playerCreationData);
         }
+    }
 
+    public void setVaryingTeams() {
+        char nextTeam = 'A';
+        for (ClientHandler clientHandler : clientHandlers) {
+            clientHandler.setUserTeam(nextTeam);
+            nextTeam++;
+        }
     }
 
     void update(Data data) {

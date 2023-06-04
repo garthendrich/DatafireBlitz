@@ -22,8 +22,6 @@ public class GameLoop implements Runnable {
     }
 
     private void start() {
-        gameState.setVaryingTeams();
-
         gameThread = new Thread(this);
         gameThread.start();
     }
@@ -38,6 +36,7 @@ public class GameLoop implements Runnable {
                 gameState.updateEntityPositions();
                 gameState.spawnBullets();
                 gameState.removeOffscreenBullets();
+                gameState.manageBulletCollisions();
                 gameState.respawnKnockedOutPlayers();
 
                 if (gamePanel != null) {

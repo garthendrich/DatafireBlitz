@@ -23,16 +23,8 @@ public class GameState {
         platforms.add(new Entity(128, 503 - 96, 721 - 256, 32));
     }
 
-    public void createPlayer(int userId, String userName) {
-        players.add(new Player(userId, userName, 400, 0));
-    }
-
-    void setVaryingTeams() {
-        char nextTeam = 'A';
-        for (Player player : players) {
-            player.setTeam(nextTeam);
-            nextTeam++;
-        }
+    public void createPlayer(int userId, String userName, char userTeam) {
+        players.add(new Player(userId, userName, userTeam, 400, 0));
     }
 
     public Player findPlayer(int userId) {
@@ -115,6 +107,20 @@ public class GameState {
             }
         }
         bullets.removeAll(offscreenBullets);
+    }
+
+    void manageBulletCollisions() {
+        ArrayList<Bullet> collidedBullets = new ArrayList<Bullet>();
+        for (Bullet bullet : bullets) {
+            for (Player player : players) {
+                if (bullet.isCollidingWith(player) && bullet.getTeam() != player.getUserTeam()) {
+                    player.knockback(bullet.getImpact());
+                    collidedBullets.add(bullet);
+                    break;
+                }
+            }
+        }
+        bullets.removeAll(collidedBullets);
     }
 
     void respawnKnockedOutPlayers() {

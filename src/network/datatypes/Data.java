@@ -19,7 +19,7 @@ abstract public class Data {
         if (this instanceof PlayerCreationData) {
             PlayerCreationData data = (PlayerCreationData) this;
             return String.join(",", DataType.playerCreation.toString(), Integer.toString(data.getUserId()),
-                    data.getUserName());
+                    data.getUserName(), String.valueOf(data.getUserTeam()));
         }
 
         if (this instanceof GameInputData) {
@@ -57,7 +57,7 @@ abstract public class Data {
         }
 
         if (dataChunks[0].equals(DataType.playerCreation.toString())) {
-            return new PlayerCreationData(Integer.parseInt(dataChunks[1]), dataChunks[2]);
+            return new PlayerCreationData(Integer.parseInt(dataChunks[1]), dataChunks[2], dataChunks[3].charAt(0));
         }
 
         if (dataChunks[0].equals(DataType.gameInput.toString())) {
