@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import javax.swing.ImageIcon;
 
 public class Player extends MovableEntity {
-    static int WIDTH = 30;
+    static int WIDTH = 48;
     static int HEIGHT = 48;
     private static int MOVEMENT_SPEED = 3;
     private int JUMP_HEIGHT = 8;
@@ -30,21 +30,10 @@ public class Player extends MovableEntity {
     private Bullet.Direction nextBulletDirection = Bullet.Direction.right;
     private double knockback;
 
-    Image player1 = new ImageIcon("src/assets/player1.gif").getImage().getScaledInstance(50, 50, Image.SCALE_DEFAULT);
-    Image player1_mirror = new ImageIcon("src/assets/player1_mirror.gif").getImage().getScaledInstance(50, 50,
-            Image.SCALE_DEFAULT);
-
-    Image player2 = new ImageIcon("src/assets/player2.gif").getImage().getScaledInstance(50, 50, Image.SCALE_DEFAULT);
-    Image player2_mirror = new ImageIcon("src/assets/player2_mirror.gif").getImage().getScaledInstance(50, 50,
-            Image.SCALE_DEFAULT);
-
-    Image player3 = new ImageIcon("src/assets/player3.gif").getImage().getScaledInstance(50, 50, Image.SCALE_DEFAULT);
-    Image player3_mirror = new ImageIcon("src/assets/player3_mirror.gif").getImage().getScaledInstance(50, 50,
-            Image.SCALE_DEFAULT);
-
-    Image player4 = new ImageIcon("src/assets/player4.gif").getImage().getScaledInstance(50, 50, Image.SCALE_DEFAULT);
-    Image player4_mirror = new ImageIcon("src/assets/player4_mirror.gif").getImage().getScaledInstance(50, 50,
-            Image.SCALE_DEFAULT);
+    Image player1 = new ImageIcon("src/assets/player1.gif").getImage();
+    Image player2 = new ImageIcon("src/assets/player2.gif").getImage();
+    Image player3 = new ImageIcon("src/assets/player3.gif").getImage();
+    Image player4 = new ImageIcon("src/assets/player4.gif").getImage();
 
     public Player(int userId, String userName, char userTeam, int x, int y) {
         super(x, y, WIDTH, HEIGHT, MOVEMENT_SPEED);
@@ -201,11 +190,10 @@ public class Player extends MovableEntity {
     @Override
     public void draw(Graphics graphics) {
         if (nextBulletDirection == Bullet.Direction.right) {
-            graphics.drawImage(player1, x, y - 2, null);
+            graphics.drawImage(player1, x, y - 2, width, height, null);
         } else {
-            graphics.drawImage(player1_mirror, x, y - 2, null);
+            graphics.drawImage(player1, x + width, y - 2, -width, height, null);
         }
-
     }
 
 }
