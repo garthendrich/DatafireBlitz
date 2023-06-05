@@ -12,14 +12,14 @@ public class Bullet extends MovableEntity {
         left, right
     }
 
-    private static int WIDTH = 16;
-    private static int HEIGHT = 16;
+    private static int WIDTH = 12;
+    private static int HEIGHT = 8;
     private static int MOVEMENT_SPEED = 16;
 
     private char team;
     private int impact = 4;
 
-    Image bullet_right = new ImageIcon("src/assets/bullet_right.png").getImage();
+    Image bullet = new ImageIcon("src/assets/bullet.png").getImage();
 
     public Bullet(int x, int y, char team) {
         super(x + (Player.WIDTH / 2), y + (Player.HEIGHT / 2), WIDTH, HEIGHT, MOVEMENT_SPEED);
@@ -48,9 +48,9 @@ public class Bullet extends MovableEntity {
     @Override
     public void draw(Graphics graphics) {
         if (this.dx > 0) {
-            graphics.drawImage(bullet_right, x, y - 2, width, height, null);
+            graphics.drawImage(bullet, x, y - 2, width, height, null);
         } else {
-            graphics.drawImage(bullet_right, x + width, y - 2, -width, height, null);
+            graphics.drawImage(bullet, x + width, y - 2, -width, height, null);
         }
     }
 }

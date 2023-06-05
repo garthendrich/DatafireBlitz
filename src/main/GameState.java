@@ -24,37 +24,28 @@ public class GameState {
     static BufferedImage TILE_MAP;
     static BufferedImage buffer;
 
-    static int TILE_SIZE = 18;
+    static int TILE_SIZE = 36;
     static int TILE_MAP_WIDTH = 20;
 
-    static int GAME_WIDTH = 40;
-    static int GAME_HEIGHT = 24;
+    static int GAME_WIDTH = 20;
+    static int GAME_HEIGHT = 12;
+
+    static int L_OFFSET = 15;
+    static int R_OFFSET = -30;
 
     static int[][] LEVEL_DATA = {
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 153, 154, 155, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 
-        {0, 0, 0, 153, 154, 155, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 153, 155, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 153, 155, 0, 0, 0, 0, 0, 0}, 
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 101, 102, 102, 103, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 121, 122, 122, 123, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 17, 18, 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 101, 102, 122, 122, 122, 122, 102, 102, 103, 0, 0, 0},
-        {0, 0, 17, 19, 38, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 121, 122, 122, 122, 122, 122, 122, 122, 123, 0, 0, 0},
-        {0, 0, 57, 59, 38, 77, 78, 79, 0, 0, 0, 0, 0, 0, 0, 101, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 122, 122, 122, 122, 122, 122, 122, 122, 123, 0, 0, 0},
-        {0, 0, 0, 57, 97, 59, 0, 0, 0, 0, 0, 0, 0, 0, 0, 121, 122, 122, 122, 122, 122, 122, 122, 122, 122, 122, 122, 122, 122, 122, 122, 122, 122, 122, 122, 122, 123, 0, 0, 0},
-        {0, 0, 0, 0, 137, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 121, 122, 122, 122, 122, 122, 122, 122, 122, 122, 122, 122, 122, 122, 122, 122, 122, 122, 122, 122, 122, 123, 0, 0, 0}, 
-        {0, 21, 22, 22, 22, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 121, 122, 122, 122, 122, 122, 122, 101, 102, 102, 102, 102, 102, 102, 102, 103, 122, 122, 122, 122, 122, 123, 0, 0, 0},
-        {0, 121, 122, 122, 122, 123, 0, 0, 0, 0, 0, 0, 0, 0, 0, 121, 122, 122, 122, 122, 122, 122, 121, 122, 122, 122, 122, 122, 122, 122, 123, 122, 122, 122, 122, 122, 123, 0, 0, 0},
-        {0, 121, 122, 122, 122, 122, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 23, 122, 122, 121, 122, 122, 122, 122, 122, 122, 122, 123, 122, 122, 122, 122, 122, 123, 0, 0, 0},
-        {0, 121, 122, 122, 122, 122, 122, 122, 122, 122, 122, 122, 122, 122, 122, 122, 122, 122, 122, 123, 122, 122, 121, 122, 122, 122, 122, 122, 122, 122, 123, 122, 122, 122, 122, 122, 123, 0, 0, 0},
+        {0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0},
+        {0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0},
+        {0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0},
+        {0  ,0  ,0  , 17, 18, 19,0  ,0  ,0  ,0  ,0  ,0  ,153,154,154,154,155,0  ,0  ,0},
+        {0  ,0  ,0  , 37, 38, 39,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0},
+        {0  ,0  ,0  , 37, 38, 39,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0},
+        {0  ,0  ,0  , 57, 97, 59,0  ,0  ,0  ,153,155,0  ,101,102,102,103,0  ,0  ,0  ,0},
+        {0  ,0  ,0  ,0  ,137,0  ,0  ,0  ,0  ,0  ,0  ,0  ,121,122,122,123,0  ,0  ,0  ,0},
+        {0  , 21, 22, 22, 22, 23,0  ,0  ,0  ,0  ,101,102,122,122,122,122,102,102,103,0},
+        {0  ,121,122,122,122,123,0  ,0  ,0  ,0  ,121,122,122,122,122,122,122,122,123,0},
+        {0  ,121,122,122,122,122,026,026,026,026,122,122,122,122,122,122,122,122,123,0},
+        {0  ,121,122,122,122,122,122,122,122,122,101,102,103,122,122,122,122,122,123,0},
     };
 
     static Image player1 = new ImageIcon("src/assets/player1.gif").getImage();
@@ -83,35 +74,53 @@ public class GameState {
         loadTileMap();
         int tileTypeX, tileTypeY, mapValue;
 
-        for(int i=0; i < GAME_WIDTH; i++){
-            for(int j=0; j< GAME_HEIGHT; j++){
+        // draw background
+        buffer = TILE_MAP.getSubimage(TILE_SIZE/2 * 16, TILE_SIZE/2 *7, TILE_SIZE/2, TILE_SIZE/2);
+        graphics.drawImage(buffer, 0, 0, GAME_WIDTH*TILE_SIZE, GAME_HEIGHT*TILE_SIZE, null);
+
+        for(int i=0; i<GAME_WIDTH; i++){
+            for(int j=0; j<GAME_HEIGHT; j++){
                 mapValue = LEVEL_DATA[j][i];
                 
                 if(mapValue == 0) continue;
-
+                
                 tileTypeX = getXComponent(mapValue);
                 tileTypeY = getYComponent(mapValue);
 
-                // System.out.println(tileTypeX + " " + tileTypeY);
-                
-                buffer = TILE_MAP.getSubimage(TILE_SIZE * tileTypeX, TILE_SIZE * tileTypeY, TILE_SIZE, TILE_SIZE);
-                graphics.drawImage(buffer, TILE_SIZE * (i), TILE_SIZE * (j), null);
+                buffer = TILE_MAP.getSubimage(TILE_SIZE/2 * tileTypeX, TILE_SIZE/2 * tileTypeY, TILE_SIZE/2, TILE_SIZE/2);
+                graphics.drawImage(buffer, TILE_SIZE * (i), TILE_SIZE * (j) , TILE_SIZE, TILE_SIZE, null);   
             }
         }
+
+        // draw these elements on top
+        buffer = TILE_MAP.getSubimage(TILE_SIZE/2 * 17, TILE_SIZE/2 * 0, TILE_SIZE/2, TILE_SIZE/2);
+        graphics.drawImage(buffer, TILE_SIZE * 2, TILE_SIZE * 4 , TILE_SIZE, TILE_SIZE, null);
+        buffer = TILE_MAP.getSubimage(TILE_SIZE/2 * 19, TILE_SIZE/2 * 0, TILE_SIZE/2, TILE_SIZE/2);
+        graphics.drawImage(buffer, TILE_SIZE * 3, TILE_SIZE * 4 , TILE_SIZE, TILE_SIZE, null);
+        buffer = TILE_MAP.getSubimage(TILE_SIZE/2 * 17, TILE_SIZE/2 * 2, TILE_SIZE/2, TILE_SIZE/2);
+        graphics.drawImage(buffer, TILE_SIZE * 2, TILE_SIZE * 5 , TILE_SIZE, TILE_SIZE, null);
+        buffer = TILE_MAP.getSubimage(TILE_SIZE/2 * 19, TILE_SIZE/2 * 2, TILE_SIZE/2, TILE_SIZE/2);
+        graphics.drawImage(buffer, TILE_SIZE * 3, TILE_SIZE * 5 , TILE_SIZE, TILE_SIZE, null);
+        buffer = TILE_MAP.getSubimage(TILE_SIZE/2 * 17, TILE_SIZE/2 * 3, TILE_SIZE/2, TILE_SIZE/2);
+        graphics.drawImage(buffer, TILE_SIZE * 5, TILE_SIZE * 5 , TILE_SIZE, TILE_SIZE, null);
+        buffer = TILE_MAP.getSubimage(TILE_SIZE/2 * 18, TILE_SIZE/2 * 3, TILE_SIZE/2, TILE_SIZE/2);
+        graphics.drawImage(buffer, TILE_SIZE * 6, TILE_SIZE * 5 , TILE_SIZE, TILE_SIZE, null);
+        buffer = TILE_MAP.getSubimage(TILE_SIZE/2 * 19, TILE_SIZE/2 * 3, TILE_SIZE/2, TILE_SIZE/2);
+        graphics.drawImage(buffer, TILE_SIZE * 7, TILE_SIZE * 5 , TILE_SIZE, TILE_SIZE, null);
     }
 
     private void createPlatforms() {
-        platforms.add(new Entity(TILE_SIZE*3, TILE_SIZE*8, TILE_SIZE*3, TILE_SIZE));
-        platforms.add(new Entity(TILE_SIZE*18, TILE_SIZE*7, TILE_SIZE*3, TILE_SIZE));
-        platforms.add(new Entity(TILE_SIZE*32, TILE_SIZE*9, TILE_SIZE*2, TILE_SIZE));
-        platforms.add(new Entity(TILE_SIZE*14, TILE_SIZE*9, TILE_SIZE*2, TILE_SIZE));
-        platforms.add(new Entity(TILE_SIZE*15, TILE_SIZE*17, TILE_SIZE*13, TILE_SIZE));
-        platforms.add(new Entity(TILE_SIZE*1, TILE_SIZE*20, TILE_SIZE*5, TILE_SIZE));
-        platforms.add(new Entity(TILE_SIZE*22, TILE_SIZE*20, TILE_SIZE*9, TILE_SIZE));
-        platforms.add(new Entity(TILE_SIZE*6, TILE_SIZE*22, TILE_SIZE*14, TILE_SIZE));
-        platforms.add(new Entity(TILE_SIZE*28, TILE_SIZE*15, TILE_SIZE*2, TILE_SIZE));
-        platforms.add(new Entity(TILE_SIZE*34, TILE_SIZE*15, TILE_SIZE*3, TILE_SIZE));
-        platforms.add(new Entity(TILE_SIZE*30, TILE_SIZE*13, TILE_SIZE*4, TILE_SIZE));
+        platforms.add(new Entity(TILE_SIZE* 1 + L_OFFSET, TILE_SIZE* 8, TILE_SIZE*5 + R_OFFSET, TILE_SIZE));
+        platforms.add(new Entity(TILE_SIZE* 6 + L_OFFSET, TILE_SIZE*10, TILE_SIZE*4 + R_OFFSET, TILE_SIZE));
+        platforms.add(new Entity(TILE_SIZE*10 + L_OFFSET, TILE_SIZE*11, TILE_SIZE*3 + R_OFFSET, TILE_SIZE));
+        platforms.add(new Entity(TILE_SIZE*10 + L_OFFSET, TILE_SIZE* 8, TILE_SIZE*2 + R_OFFSET, TILE_SIZE));
+        platforms.add(new Entity(TILE_SIZE*16 + L_OFFSET, TILE_SIZE* 8, TILE_SIZE*3 + R_OFFSET, TILE_SIZE));
+        platforms.add(new Entity(TILE_SIZE*12 + L_OFFSET, TILE_SIZE* 6, TILE_SIZE*4 + R_OFFSET, TILE_SIZE));
+        platforms.add(new Entity(TILE_SIZE*12 + L_OFFSET, TILE_SIZE* 6, TILE_SIZE*4 + R_OFFSET, TILE_SIZE));
+        platforms.add(new Entity(TILE_SIZE* 9 + L_OFFSET, TILE_SIZE* 6, TILE_SIZE*2 + R_OFFSET, TILE_SIZE));
+        platforms.add(new Entity(TILE_SIZE*12 + L_OFFSET, TILE_SIZE* 3, TILE_SIZE*5 + R_OFFSET, TILE_SIZE));
+        platforms.add(new Entity(TILE_SIZE* 2 + L_OFFSET, TILE_SIZE* 4, TILE_SIZE*2 + R_OFFSET, TILE_SIZE));
+        platforms.add(new Entity(TILE_SIZE* 5 + L_OFFSET, TILE_SIZE* 5, TILE_SIZE*3 + R_OFFSET, TILE_SIZE));
     }
 
     public void createPlayer(int userId, String userName, char userTeam) {
