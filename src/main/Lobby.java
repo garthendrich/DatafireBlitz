@@ -9,8 +9,8 @@ import network.Server;
 import java.awt.event.*;
 
 public class Lobby extends JFrame{
-    static int WINDOW_WIDTH = 960;
-    static int WINDOW_HEIGHT = 540;
+    public static int WINDOW_WIDTH = 960;
+    public static int WINDOW_HEIGHT = 540;
 
     Server server;
     Client client;
@@ -81,9 +81,10 @@ public class Lobby extends JFrame{
     }
 
     private void lobbyPage(String name, String ipAddress, int portNumber) {
-        client = new Client(ipAddress, portNumber);
+        client = new Client(name, ipAddress, portNumber);
+        client.attachLobbyPage(this);
 
-        gameChat = new GameChat(name);
+        gameChat = new GameChat();
         gameChat.setFocusable(true);
 
         client.attachChat(gameChat);
@@ -110,8 +111,10 @@ public class Lobby extends JFrame{
         b2.setBackground(Color.cyan);
         b1.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
-                startGame(name);
+            public void actionPerformed(ActionEvent e) {
+                server.stopConnectionSearch();
+                server.setVaryingTeams();
+                server.startGame();
             }
         });
         b2.addActionListener(new ActionListener() {
@@ -130,12 +133,16 @@ public class Lobby extends JFrame{
         this.add(portLabel,gbc);
         gbc.gridy = 2;
         this.add(playersLabel,gbc);
+
+        if (server != null) {
         gbc.gridy = 3;
         this.add(confirmation,gbc);
         gbc.gridy = 4;
         gbc.gridwidth = 1;
         gbc.gridheight = 2;
         this.add(b1,gbc);
+        }
+
         gbc.gridx = 1;
         gbc.gridy = 5;
         this.add(b2,gbc);
@@ -201,26 +208,25 @@ public class Lobby extends JFrame{
         this.repaint();
     }
 
-    private void startGame(String name) {
-        if (server != null) {
-            server.stopConnectionSearch();
-        }
-
+    public void startGame() {
         this.getContentPane().removeAll();
-
         GamePanel gamePanel = new GamePanel();
-        gamePanel.setFocusable(true);
-
+        new GameKeyInputs(gamePanel, client);
         addListeners(gameChat, gamePanel);
+
+        GameState gameState = new GameState();
+        client.attachGameState(gameState);
+
+        new GameLoop(gameState, gamePanel);
 
         this.setLayout(new BorderLayout());
 
         this.add(gamePanel);
         this.add(gameChat, BorderLayout.EAST);
 
+        gamePanel.requestFocusInWindow();
+
         refreshFrame();
-        GameLoop gameLoop = new GameLoop(gamePanel);
-        gameLoop.start();
     }
 
     private void addListeners(GameChat gameChat, GamePanel gamePanel){

@@ -1,43 +1,29 @@
 package main;
 
-import java.util.ArrayList;
-
-import components.Entity;
-import components.Player;
-import components.Bullet;
-
 public class GameLoop implements Runnable {
     private int FPS = 120;
     private double NANO_SECONDS_PER_FRAME = 1_000_000_000.0 / FPS;
 
-    private GamePanel gamePanel;
     private Thread gameThread;
-    private KeyInputs keyInputs = new KeyInputs();
+    private GamePanel gamePanel;
+    private GameState gameState;
 
-    private Player player = new Player(400, 0, 'A');
-    private Player dummy1 = new Player(200, 0, 'C');
-    private Player dummy2 = new Player(300, 0, 'C');
-    private Player dummy3 = new Player(500, 0, 'C');
-    private ArrayList<Entity> platforms = new ArrayList<Entity>();
-    private ArrayList<Bullet> bullets = new ArrayList<Bullet>();
-
-    GameLoop(GamePanel gamePanel) {
+    // to be used by client user
+    public GameLoop(GameState gameState, GamePanel gamePanel) {
+        this(gameState);
         this.gamePanel = gamePanel;
+    }
 
+    // to be used by host user
+    public GameLoop(GameState gameState) {
+        this.gameState = gameState;
+
+        start();
+    }
+
+    private void start() {
         gameThread = new Thread(this);
-
-        createPlatforms();
-    }
-
-    private void createPlatforms() {
-        platforms.add(new Entity(256, 256, 256, 64));
-        platforms.add(new Entity(128, gamePanel.getHeight() - 96, gamePanel.getWidth() - 256, 32));
-    }
-
-    void start() {
         gameThread.start();
-        gamePanel.addKeyListener(keyInputs);
-        gamePanel.requestFocusInWindow();
     }
 
     @Override
@@ -47,112 +33,20 @@ public class GameLoop implements Runnable {
 
         while (true) {
             if (currentTime >= nextFrameNanoSeconds) {
-                updatePlayerMovement();
-                updateDummyMovement();
+                gameState.updateEntityPositions();
+                gameState.spawnBullets();
+                gameState.removeOffscreenBullets();
+                gameState.manageBulletCollisions();
+                gameState.respawnKnockedOutPlayers();
 
-                spawnPlayerBullets();
-                updateBulletMovement();
-
-                manageBulletCollision();
-
-                updateCanvas();
+                if (gamePanel != null) {
+                    gamePanel.render(gameState);
+                }
 
                 nextFrameNanoSeconds += NANO_SECONDS_PER_FRAME;
             }
 
             currentTime = System.nanoTime();
         }
-    }
-
-    private void updatePlayerMovement() {
-        player.stopHorizontalMovement();
-
-        if (keyInputs.moveLeft && !keyInputs.moveRight) {
-            player.moveLeft();
-        } else if (keyInputs.moveRight && !keyInputs.moveLeft) {
-            player.moveRight();
-        }
-
-        if (keyInputs.moveUp) {
-            player.jump();
-        } else if (keyInputs.moveDown) {
-            player.moveDown();
-        }
-
-        if (player.getPosY() >= 700) {
-            player.respawn();
-        }
-
-        player.updatePosition(platforms);
-    }
-
-    private void updateDummyMovement() {
-        dummy1.updatePosition(platforms);
-        dummy2.updatePosition(platforms);
-        dummy3.updatePosition(platforms);
-
-        if (dummy1.getPosY() >= 700)
-            dummy1.respawn();
-        if (dummy2.getPosY() >= 700)
-            dummy2.respawn();
-        if (dummy3.getPosY() >= 700)
-            dummy3.respawn();
-    }
-
-    private void spawnPlayerBullets() {
-        if (keyInputs.bulletLeft || keyInputs.bulletRight) {
-            Bullet bullet = player.fireBullet();
-
-            if (bullet == null) {
-                return;
-            }
-
-            if (keyInputs.bulletLeft) {
-                bullet.moveLeft();
-            } else if (keyInputs.bulletRight) {
-                bullet.moveRight();
-            }
-
-            bullets.add(bullet);
-        }
-    }
-
-    private void updateBulletMovement() {
-        for (Bullet bullet : bullets) {
-            bullet.updatePosition();
-        }
-    }
-
-    private void manageBulletCollision() {
-        ArrayList<Player> players = new ArrayList<Player>();
-        players.add(player);
-        players.add(dummy1);
-        players.add(dummy2);
-        players.add(dummy3);
-
-        ArrayList<Bullet> collidedBullets = new ArrayList<Bullet>();
-        for (Bullet bullet : bullets) {
-            for (Player player : players) {
-                if (bullet.isCollidingWith(player) && bullet.getTeam() != player.getTeam()) {
-                    player.knockback(bullet.getImpact());
-                    collidedBullets.add(bullet);
-                    break;
-                }
-            }
-        }
-        bullets.removeAll(collidedBullets);
-    }
-
-    private void updateCanvas() {
-        ArrayList<Entity> entities = new ArrayList<Entity>();
-        entities.add(player);
-        entities.addAll(platforms);
-        entities.addAll(bullets);
-        entities.add(dummy1);
-        entities.add(dummy2);
-        entities.add(dummy3);
-
-        gamePanel.setEntities(entities);
-        gamePanel.repaint();
     }
 }

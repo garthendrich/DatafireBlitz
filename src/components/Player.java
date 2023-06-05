@@ -14,41 +14,109 @@ public class Player extends MovableEntity {
     private double SECONDS_PER_BULLET = 1.0 / BPS;
     private double KNOCKBACK_FRICTION = 0.1;
 
-    private char team;
+    private int userId;
+    private String userName;
+    private char userTeam;
     private boolean onPlatform = false;
     private boolean canJump = true;
+    private boolean willJump = false;
+    private boolean willDrop = false;
+    private boolean willFireBullet = false;
     private double nextBulletFireSeconds = 0.0;
+    private Bullet.Direction nextBulletDirection = Bullet.Direction.right;
     private double knockback;
 
-    public Player(int x, int y, char team) {
+    public Player(int userId, String userName, char userTeam, int x, int y) {
         super(x, y, WIDTH, HEIGHT, MOVEMENT_SPEED);
 
-        this.team = team;
+        this.userId = userId;
+        this.userName = userName;
+        this.userTeam = userTeam;
     }
 
-    public void jump() {
+    @Override
+    public void moveLeft() {
+        super.moveLeft();
+        nextBulletDirection = Bullet.Direction.left;
+    }
+
+    @Override
+    public void moveRight() {
+        super.moveRight();
+        nextBulletDirection = Bullet.Direction.right;
+    }
+
+    public void jumps() {
+        willJump = true;
+    }
+
+    public void drops() {
+        willDrop = true;
+    }
+
+    public void stopVerticalMovement() {
+        willJump = false;
+        willDrop = false;
+    }
+
+    private void jump() {
         if (canJump) {
             dy = -JUMP_HEIGHT;
             canJump = false;
         }
     }
 
-    public Bullet fireBullet() {
-        double currentTimeSeconds = System.nanoTime() / 1_000_000_000.0;
-
-        if (currentTimeSeconds >= nextBulletFireSeconds) {
-            nextBulletFireSeconds = currentTimeSeconds + SECONDS_PER_BULLET;
-            return new Bullet(this.getPosX(), this.getPosY(), this.getTeam());
+    private void drop() {
+        if (onPlatform) {
+            onPlatform = false;
+            this.y++;
         }
+    }
 
-        return null;
+    public void startFiringBullets() {
+        willFireBullet = true;
+    }
+
+    public void stopFiringBullets() {
+        willFireBullet = false;
     }
 
     public void updatePosition(ArrayList<Entity> platforms) {
+        if (willJump) {
+            jump();
+        }
+
+        if (willDrop) {
+            drop();
+        }
+
         manageGravity(platforms);
         manageKnockback();
 
         super.updatePosition();
+    }
+
+    public Bullet fireBullet() {
+        if (!willFireBullet) {
+            return null;
+        }
+
+        double currentTimeSeconds = System.nanoTime() / 1_000_000_000.0;
+
+        if (currentTimeSeconds >= nextBulletFireSeconds) {
+            nextBulletFireSeconds = currentTimeSeconds + SECONDS_PER_BULLET;
+            Bullet bullet = new Bullet(this.x, this.y, this.userTeam);
+
+            if (nextBulletDirection == Bullet.Direction.right) {
+                bullet.moveRight();
+            } else {
+                bullet.moveLeft();
+            }
+
+            return bullet;
+        }
+
+        return null;
     }
 
     private void manageGravity(ArrayList<Entity> platforms) {
@@ -98,26 +166,15 @@ public class Player extends MovableEntity {
         return y + height <= entity.y;
     }
 
-    public void moveDown() {
-        if (onPlatform) {
-            onPlatform = false;
-            this.y++;
-        }
-    }
-
     public void knockback(int magnitude) {
         this.knockback += magnitude;
     }
 
-    public int getPosX() {
-        return this.x;
+    public int getUserId() {
+        return userId;
     }
 
-    public int getPosY() {
-        return this.y;
-    }
-
-    public char getTeam() {
-        return this.team;
+    public char getUserTeam() {
+        return userTeam;
     }
 }

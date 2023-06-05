@@ -27,4 +27,17 @@ public class Entity {
     public void draw(Graphics graphics) {
         graphics.fillRect(x, y, width, height);
     }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setPosition(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
 }

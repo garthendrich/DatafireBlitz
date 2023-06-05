@@ -6,32 +6,15 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import network.datatypes.Data;
+
 abstract class NetworkNode implements Runnable {
-    protected Thread dataManagerThread;
+    private Thread dataManagerThread;
 
-    protected Socket clientSocket;
     private BufferedReader clientReader;
-    protected PrintWriter clientWriter;
+    private PrintWriter clientWriter;
 
-    NetworkNode() {
-        dataManagerThread = new Thread(this);
-    }
-
-    /**
-     * This method is important because the subclasses of this class has to finish
-     * initializing clientSocket before the thread can start
-     */
-    void start() {
-        dataManagerThread.start();
-    }
-
-    @Override
-    public void run() {
-        initializeCharacterStreamHandlers();
-        startReceivingData();
-    }
-
-    private void initializeCharacterStreamHandlers() {
+    void start(Socket clientSocket) {
         try {
             clientReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             clientWriter = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -39,25 +22,38 @@ abstract class NetworkNode implements Runnable {
             exception.printStackTrace();
             System.out.println("Error initializing input and output handlers: " + exception.getMessage());
         }
+
+        dataManagerThread = new Thread(this);
+        dataManagerThread.start();
     }
 
-    private void startReceivingData() {
-        try {
-            String data = clientReader.readLine();
-            while (data != null) {
-                handleData(data);
+    @Override
+    public void run() {
+        while (true) {
+            Data data = awaitData();
 
-                data = clientReader.readLine();
+            if (data == null) {
+                break;
             }
-        } catch (IOException exception) {
-            exception.printStackTrace();
-            System.out.println("Error reading data from server: " + exception.getMessage());
+
+            handleData(data);
         }
     }
 
-    abstract void handleData(String data);
+    Data awaitData() {
+        try {
+            String serializedData = clientReader.readLine();
+            return Data.fromSerialized(serializedData);
+        } catch (IOException exception) {
+            exception.printStackTrace();
+            System.out.println("Error reading serialized data from stream: " + exception.getMessage());
+            return null;
+        }
+    }
 
-    public void send(String data) {
-        clientWriter.println(data);
+    abstract void handleData(Data data);
+
+    public void send(Data data) {
+        clientWriter.println(data.getSerialized());
     }
 }

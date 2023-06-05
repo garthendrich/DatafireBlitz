@@ -14,6 +14,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import network.Client;
+import network.datatypes.MessageData;
 
 public class GameChat extends JPanel{
     // Elements declaration
@@ -21,17 +22,16 @@ public class GameChat extends JPanel{
     JTextField inputField;
     JScrollPane scroller;
 
-    String playerName;
     Client client;
 
-    GameChat(String playerName) {
-        this.playerName = playerName;
-
+    GameChat() {
         // set 
         this.setLayout(new FlowLayout());
         this.setPreferredSize(new Dimension(225, 540));
         this.setBackground(new Color(0,0,0,64));
         this.setVisible(true);
+        setFocusable(true);
+
         
         chatHistory = createChatHistory();          // chat text field
         scroller = createScroller(chatHistory);     // scroller
@@ -42,12 +42,9 @@ public class GameChat extends JPanel{
         this.add(inputField);        
     }
 
-    public void updateChat(String message){
-        if(!message.isBlank()){
-            chatHistory.append("\n" + message);
-            inputField.setText("");
-        }
-    }   
+    public void updateChat(String message) {
+        chatHistory.append("\n" + message);
+    }
 
     private static JTextArea createChatHistory(){
         JTextArea newChat = new JTextArea();
@@ -75,7 +72,13 @@ public class GameChat extends JPanel{
         newField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                client.send(playerName + ": " + inputField.getText());
+                String messageString = inputField.getText();
+
+                if (!messageString.isBlank()) {
+                    MessageData message = new MessageData(messageString);
+                    client.send(message);
+                    inputField.setText("");
+                }
             }
         });
         return newField;
