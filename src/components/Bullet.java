@@ -1,5 +1,10 @@
 package components;
 
+import java.awt.Graphics;
+import java.awt.Image;
+
+import javax.swing.ImageIcon;
+
 import main.Lobby;
 
 public class Bullet extends MovableEntity {
@@ -13,6 +18,9 @@ public class Bullet extends MovableEntity {
 
     private char team;
     private int impact = 4;
+
+    Image bullet_left = new ImageIcon("src/assets/bullet_left.png").getImage();
+    Image bullet_right = new ImageIcon("src/assets/bullet_right.png").getImage();
 
     public Bullet(int x, int y, char team) {
         super(x + (Player.WIDTH / 2), y + (Player.HEIGHT / 2), WIDTH, HEIGHT, MOVEMENT_SPEED);
@@ -36,5 +44,17 @@ public class Bullet extends MovableEntity {
         Boolean pastLeft = x + width < 0;
         Boolean pastRight = x > Lobby.WINDOW_WIDTH;
         return pastLeft || pastRight;
+    }
+
+    @Override
+    public void draw(Graphics graphics) {
+
+        if (this.dx > 0) {
+            graphics.drawImage(bullet_right, x, y - 2, null);
+        } else {
+            graphics.drawImage(bullet_left, x, y - 2, null);
+        }
+        // graphics.setColor(new Color(0, 0, 0, 100));
+        // graphics.fillRect(x, y, width, height);
     }
 }

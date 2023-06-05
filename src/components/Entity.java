@@ -1,5 +1,6 @@
 package components;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
@@ -25,6 +26,7 @@ public class Entity {
     }
 
     public void draw(Graphics graphics) {
+        graphics.setColor(new Color(0,0,0,0));
         graphics.fillRect(x, y, width, height);
     }
 

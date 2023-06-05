@@ -23,9 +23,12 @@ class GamePanel extends JPanel {
     @Override
     protected void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
-
+        
+        GameState.drawTiles(graphics);  
+        
         for (Entity entity : entities) {
             entity.draw(graphics);
         }
+
     }
 }
