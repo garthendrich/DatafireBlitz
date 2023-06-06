@@ -179,11 +179,11 @@ public class Player extends MovableEntity {
         return userTeam;
     }
 
-    public void setLives(int change){
-        this.lives += change;
+    public void loseLife(){
+        this.lives--;
     }
 
-    public int getLives(){
-        return this.lives;
+    public boolean hasLife(){
+        return this.lives > 0;
     }
 }
