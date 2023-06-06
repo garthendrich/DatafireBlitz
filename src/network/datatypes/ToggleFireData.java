@@ -8,7 +8,7 @@ public class ToggleFireData extends PositionData {
     private Status status;
 
     // for data serialization
-    public ToggleFireData(int userId, Status status, int playerX, int playerY) {
+    public ToggleFireData(int userId, Status status, double playerX, double playerY) {
         this(userId, status);
         setPlayerPosition(playerX, playerY);
     }

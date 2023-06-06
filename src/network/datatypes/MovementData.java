@@ -8,7 +8,7 @@ public class MovementData extends PositionData {
     private Movement direction;
 
     // for data serialization
-    public MovementData(int userId, Movement direction, int x, int y) {
+    public MovementData(int userId, Movement direction, double x, double y) {
         this(userId, direction);
         setPlayerPosition(x, y);
     }
