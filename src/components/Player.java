@@ -33,6 +33,7 @@ public class Player extends MovableEntity {
     private Bullet.Direction nextBulletDirection = Bullet.Direction.right;
     private double knockback;
     private int damageTaken;
+    private int lives = 3;
 
     Image player1 = new ImageIcon("src/assets/player1.gif").getImage();
     Image player2 = new ImageIcon("src/assets/player2.gif").getImage();
@@ -42,8 +43,9 @@ public class Player extends MovableEntity {
     private Image[] playerGifs = { player1, player2, player3, player4 };
     private Image playerGif;
 
-    public Player(int userId, String userName, char userTeam, double x, double y, int playerGifIndex) {
-        super(x, y, WIDTH, HEIGHT, MOVEMENT_SPEED);
+    public Player(int userId, String userName, char userTeam, int playerGifIndex) {
+        super(0, 0, WIDTH, HEIGHT, MOVEMENT_SPEED);
+        respawn();
 
         this.userId = userId;
         this.userName = userName;
@@ -208,6 +210,14 @@ public class Player extends MovableEntity {
 
     public char getUserTeam() {
         return userTeam;
+    }
+
+    public void loseLife() {
+        this.lives--;
+    }
+
+    public boolean hasLife() {
+        return this.lives > 0;
     }
 
     @Override

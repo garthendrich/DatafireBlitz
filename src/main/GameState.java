@@ -126,7 +126,7 @@ public class GameState {
     }
 
     public void createPlayer(int userId, String userName, char userTeam) {
-        players.add(new Player(userId, userName, userTeam, 400, 0, nextPlayerGifIndex));
+        players.add(new Player(userId, userName, userTeam, nextPlayerGifIndex));
         nextPlayerGifIndex = (nextPlayerGifIndex + 1);
     }
 
@@ -228,8 +228,12 @@ public class GameState {
 
     void respawnKnockedOutPlayers() {
         for (Player player : players) {
-            if (player.getY() >= 700) {
-                player.respawn();
+            if (player.hasLife() && player.getY() >= 700) {
+                player.loseLife();
+
+                if (player.hasLife()) {
+                    player.respawn();
+                }
             }
         }
     }
