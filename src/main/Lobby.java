@@ -8,16 +8,17 @@ import network.Server;
 
 import java.awt.event.*;
 
-public class Lobby extends JFrame{
+public class Lobby extends JFrame {
     public static int WINDOW_WIDTH = 960;
     public static int WINDOW_HEIGHT = 540;
 
     Server server;
     Client client;
     GameChat gameChat;
+    GameHud gameHud;
 
-    public Lobby(){
-        this.setSize(WINDOW_WIDTH,WINDOW_HEIGHT);
+    public Lobby() {
+        this.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         this.setTitle("Datafire Blitz");
         this.setResizable(false);
         this.setLocationRelativeTo(null); // center window on screen
@@ -26,7 +27,7 @@ public class Lobby extends JFrame{
         this.setLayout(new GridBagLayout());
     }
 
-    public void homepage(){
+    public void homepage() {
         this.getContentPane().removeAll();
         TextField usernameInput = new TextField(20);
         JButton b1 = new JButton("Create Lobby");
@@ -48,9 +49,10 @@ public class Lobby extends JFrame{
         b2.setBackground(Color.cyan);
         b2.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
+            public void actionPerformed(ActionEvent e) {
                 String name = usernameInput.getText();
-                if (name.length() > 0) joinLobbyPage(name);
+                if (name.length() > 0)
+                    joinLobbyPage(name);
             }
         });
 
@@ -66,14 +68,14 @@ public class Lobby extends JFrame{
         gbc.gridy = 1;
         this.add(usernameInput, gbc);
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.gridx=0;
-        gbc.gridy=3;
+        gbc.gridx = 0;
+        gbc.gridy = 3;
         gbc.gridwidth = 1;
         gbc.gridheight = 2;
         this.add(b1, gbc);
         gbc.gridx = 1;
         gbc.gridy = 3;
-        this.add(b2,gbc);
+        this.add(b2, gbc);
         this.setVisible(true);
 
         refreshFrame();
@@ -95,7 +97,7 @@ public class Lobby extends JFrame{
         // ! add chat UI to lobby page:
         // this.add(gameChat, BorderLayout.EAST);
 
-        String[] players = {name};
+        String[] players = { name };
         String label = "";
         for (int i = 0; i < players.length; i++) {
             label += players[i] + " ";
@@ -119,7 +121,7 @@ public class Lobby extends JFrame{
         });
         b2.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
+            public void actionPerformed(ActionEvent e) {
                 homepage();
             }
         });
@@ -128,24 +130,24 @@ public class Lobby extends JFrame{
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
-        this.add(ipLabel,gbc);
+        this.add(ipLabel, gbc);
         gbc.gridy = 1;
-        this.add(portLabel,gbc);
+        this.add(portLabel, gbc);
         gbc.gridy = 2;
-        this.add(playersLabel,gbc);
+        this.add(playersLabel, gbc);
 
         if (server != null) {
-        gbc.gridy = 3;
-        this.add(confirmation,gbc);
-        gbc.gridy = 4;
-        gbc.gridwidth = 1;
-        gbc.gridheight = 2;
-        this.add(b1,gbc);
+            gbc.gridy = 3;
+            this.add(confirmation, gbc);
+            gbc.gridy = 4;
+            gbc.gridwidth = 1;
+            gbc.gridheight = 2;
+            this.add(b1, gbc);
         }
 
         gbc.gridx = 1;
         gbc.gridy = 5;
-        this.add(b2,gbc);
+        this.add(b2, gbc);
         refreshFrame();
     }
 
@@ -179,7 +181,7 @@ public class Lobby extends JFrame{
         b2.setBackground(Color.cyan);
         b2.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
+            public void actionPerformed(ActionEvent e) {
                 homepage();
             }
         });
@@ -188,27 +190,30 @@ public class Lobby extends JFrame{
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.gridy = 0;
-        this.add(ip,gbc);
+        this.add(ip, gbc);
         gbc.gridy = 1;
-        this.add(ipInput,gbc);
+        this.add(ipInput, gbc);
         gbc.gridy = 2;
-        this.add(port,gbc);
+        this.add(port, gbc);
         gbc.gridy = 3;
-        this.add(portInput,gbc);
+        this.add(portInput, gbc);
         gbc.gridy = 4;
-        this.add(b1,gbc);
+        this.add(b1, gbc);
         gbc.gridy = 5;
-        this.add(b2,gbc);
+        this.add(b2, gbc);
 
         refreshFrame();
     }
 
-    private void refreshFrame(){
+    private void refreshFrame() {
         this.revalidate();
         this.repaint();
     }
 
     public void startGame() {
+        JPanel gameComponent = new JPanel();
+        gameComponent.setLayout(new BorderLayout());
+
         this.getContentPane().removeAll();
         GamePanel gamePanel = new GamePanel();
         new GameKeyInputs(gamePanel, client);
@@ -221,7 +226,11 @@ public class Lobby extends JFrame{
 
         this.setLayout(new BorderLayout());
 
-        this.add(gamePanel);
+        gameHud = new GameHud();
+
+        gameComponent.add(gamePanel);
+        gameComponent.add(gameHud, BorderLayout.SOUTH);
+        this.add(gameComponent);
         this.add(gameChat, BorderLayout.EAST);
 
         gamePanel.requestFocusInWindow();
@@ -229,17 +238,19 @@ public class Lobby extends JFrame{
         refreshFrame();
     }
 
-    private void addListeners(GameChat gameChat, GamePanel gamePanel){
+    private void addListeners(GameChat gameChat, GamePanel gamePanel) {
         gamePanel.addKeyListener(new KeyListener() {
             @Override
-            public void keyTyped(KeyEvent e) {}
-            
+            public void keyTyped(KeyEvent e) {
+            }
+
             @Override
-            public void keyReleased(KeyEvent e) {}
+            public void keyReleased(KeyEvent e) {
+            }
 
             @Override
             public void keyPressed(KeyEvent e) {
-                if(e.getKeyCode() == KeyEvent.VK_ENTER){
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     gameChat.inputField.setText("");
                     gameChat.inputField.requestFocusInWindow();
                 }
@@ -248,14 +259,16 @@ public class Lobby extends JFrame{
 
         gameChat.inputField.addKeyListener(new KeyListener() {
             @Override
-            public void keyTyped(KeyEvent e) {}
-            
+            public void keyTyped(KeyEvent e) {
+            }
+
             @Override
-            public void keyReleased(KeyEvent e) {}
+            public void keyReleased(KeyEvent e) {
+            }
 
             @Override
             public void keyPressed(KeyEvent e) {
-                if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     gamePanel.requestFocusInWindow();
                 }
             }

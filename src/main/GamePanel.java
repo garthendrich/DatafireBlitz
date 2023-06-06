@@ -1,5 +1,6 @@
 package main;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
@@ -23,9 +24,12 @@ class GamePanel extends JPanel {
     @Override
     protected void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
-
+        
+        GameState.drawTiles(graphics);  
+        
         for (Entity entity : entities) {
             entity.draw(graphics);
         }
+
     }
 }

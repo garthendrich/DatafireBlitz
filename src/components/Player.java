@@ -1,8 +1,12 @@
 package components;
 
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+
+import javax.swing.ImageIcon;
 
 public class Player extends MovableEntity {
     static int WIDTH = 48;
@@ -25,6 +29,11 @@ public class Player extends MovableEntity {
     private double nextBulletFireSeconds = 0.0;
     private Bullet.Direction nextBulletDirection = Bullet.Direction.right;
     private double knockback;
+
+    Image player1 = new ImageIcon("src/assets/player1.gif").getImage();
+    Image player2 = new ImageIcon("src/assets/player2.gif").getImage();
+    Image player3 = new ImageIcon("src/assets/player3.gif").getImage();
+    Image player4 = new ImageIcon("src/assets/player4.gif").getImage();
 
     public Player(int userId, String userName, char userTeam, int x, int y) {
         super(x, y, WIDTH, HEIGHT, MOVEMENT_SPEED);
@@ -177,4 +186,14 @@ public class Player extends MovableEntity {
     public char getUserTeam() {
         return userTeam;
     }
+
+    @Override
+    public void draw(Graphics graphics) {
+        if (nextBulletDirection == Bullet.Direction.right) {
+            graphics.drawImage(player1, x, y - 2, width, height, null);
+        } else {
+            graphics.drawImage(player1, x + width, y - 2, -width, height, null);
+        }
+    }
+
 }
