@@ -93,16 +93,17 @@ public class Lobby extends JFrame {
     }
 
     private void lobbyPage(String name, String ipAddress, int portNumber) {
-        gameState = new GameState();
         gameHud = new GameHud();
-
-        gameChat.setFocusable(true);
-        gameChat.attachClient(client);
+        gameState = new GameState(gameHud);
 
         client = new Client(name, ipAddress, portNumber);
         client.attachLobbyPage(this);
         client.attachGameState(gameState);
         client.attachGameHud(gameHud);
+
+        gameChat.setFocusable(true);
+        gameChat.attachClient(client);
+
         client.attachChat(gameChat);
 
         this.getContentPane().removeAll();

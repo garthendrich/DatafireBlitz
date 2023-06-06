@@ -45,8 +45,8 @@ abstract public class Data {
                     Double.toString(data.getPlayerY()));
         }
 
-        if (this instanceof StatsData) {
-            StatsData data = (StatsData) this;
+        if (this instanceof LivesData) {
+            LivesData data = (LivesData) this;
             return String.join(",", DataType.stats.toString(), Integer.toString(data.getUserId()),
                     Integer.toString(data.getLives()));
         }
@@ -89,7 +89,7 @@ abstract public class Data {
         }
 
         if (dataChunks[0].equals(DataType.stats.toString())) {
-            return new StatsData(Integer.parseInt(dataChunks[1]), Integer.parseInt(dataChunks[2]));
+            return new LivesData(Integer.parseInt(dataChunks[1]), Integer.parseInt(dataChunks[2]));
         }
 
         System.out.println("Error deserializing data " + serializedData);

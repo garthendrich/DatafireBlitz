@@ -3,6 +3,7 @@ package main;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
@@ -20,6 +21,7 @@ public class GameHud extends JPanel {
 
     private ArrayList<Integer> userIds = new ArrayList<Integer>();
     private ArrayList<JPanel> playerDisplays = new ArrayList<JPanel>();
+    private ArrayList<JLabel> playerDamageDisplays = new ArrayList<JLabel>();
     private ArrayList<JLabel> playerHeartDisplays = new ArrayList<JLabel>();
     private ImageIcon[] heartImages = { heart0, heart1, heart2, heart3 };
 
@@ -35,7 +37,11 @@ public class GameHud extends JPanel {
         JLabel playerHeartDisplay = newHearts();
         playerHeartDisplays.add(playerHeartDisplay);
 
-        JPanel playerDisplay = createPlayerHUD(playerDisplays.size(), userName, playerHeartDisplay);
+        JLabel playerDamageDisplay = newDamages();
+        playerDamageDisplays.add(playerDamageDisplay);
+
+        JPanel playerDisplay = createPlayerHUD(playerDisplays.size(), userName, playerHeartDisplay,
+                playerDamageDisplay);
         playerDisplays.add(playerDisplay);
     }
 
@@ -51,12 +57,30 @@ public class GameHud extends JPanel {
         return hearts;
     }
 
-    private JPanel newComponent(JLabel hearts, String playerName) {
+    private JLabel newDamages() {
+        JLabel damages = new JLabel();
+        damages.setText("0%");
+        return damages;
+    }
+
+    void setDamage(int userId, int damage) {
+        int playerDamageDisplayIndex = userIds.indexOf(userId);
+        JLabel playerDamageDisplay = playerDamageDisplays.get(playerDamageDisplayIndex);
+        playerDamageDisplay.setText(damage + "%");
+    }
+
+    private JPanel newComponent(JLabel hearts, JLabel damages, String playerName) {
         JPanel component = new JPanel();
-        component.setLayout(new FlowLayout());
+        component.setLayout(new GridLayout(3, 0));
 
         JLabel name = new JLabel(playerName);
+
+        name.setHorizontalAlignment(JLabel.CENTER);
+        damages.setHorizontalAlignment(JLabel.CENTER);
+        hearts.setHorizontalAlignment(JLabel.CENTER);
+
         component.add(name);
+        component.add(damages);
         component.add(hearts);
 
         return component;
@@ -86,12 +110,12 @@ public class GameHud extends JPanel {
         return new JLabel(playerImage);
     }
 
-    private JPanel createPlayerHUD(int playerNumber, String playerName, JLabel hearts) {
+    private JPanel createPlayerHUD(int playerNumber, String playerName, JLabel hearts, JLabel damages) {
         JPanel playerHUD = new JPanel();
         playerHUD.setLayout(new BorderLayout());
         playerHUD.setPreferredSize(new Dimension(PLAYER_HUD_WIDTH, PLAYER_HUD_HEIGHT));
         playerHUD.add(newPlayerImage(playerNumber + 1), BorderLayout.WEST);
-        playerHUD.add(newComponent(hearts, playerName));
+        playerHUD.add(newComponent(hearts, damages, playerName));
         return playerHUD;
     }
 
