@@ -1,19 +1,19 @@
 package network.datatypes;
 
 abstract public class PositionData extends PlayerOwnedData {
-    private int playerX;
-    private int playerY;
+    private double playerX;
+    private double playerY;
 
-    public void setPlayerPosition(int x, int y) {
+    public void setPlayerPosition(double x, double y) {
         playerX = x;
         playerY = y;
     }
 
-    public int getPlayerX() {
+    public double getPlayerX() {
         return playerX;
     }
 
-    public int getPlayerY() {
+    public double getPlayerY() {
         return playerY;
     }
 }
