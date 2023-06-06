@@ -153,8 +153,8 @@ public class Server implements Runnable {
         int userId = positionData.getUserId();
         Player serverPlayer = serverGameState.findPlayer(userId);
 
-        int serverPlayerX = serverPlayer.getX();
-        int serverPlayerY = serverPlayer.getY();
+        double serverPlayerX = serverPlayer.getX();
+        double serverPlayerY = serverPlayer.getY();
         positionData.setPlayerPosition(serverPlayerX, serverPlayerY);
     }
 

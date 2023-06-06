@@ -3,10 +3,12 @@ package components;
 class MovableEntity extends Entity {
     private int movementSpeed;
 
-    protected int dx = 0;
+    protected double dx = 0;
     protected double dy = 0;
 
-    MovableEntity(int x, int y, int width, int height, int movementSpeed) {
+    private double lastPositionUpdate = System.nanoTime();
+
+    MovableEntity(double x, double y, int width, int height, int movementSpeed) {
         super(x, y, width, height);
 
         this.movementSpeed = movementSpeed;
@@ -24,13 +26,17 @@ class MovableEntity extends Entity {
         this.dx = 0;
     }
 
-    public void updatePosition() {
-        x += dx;
-        y += dy;
+    protected double[] getNextPosition() {
+        double deltaTime = (System.nanoTime() - lastPositionUpdate) / 1_000_000_000.0;
+        double[] nextPosition = { x + (dx * deltaTime), y + (dy * deltaTime) };
+        return nextPosition;
     }
 
-    public void respawn(){
-        x = 400;
-        y = 0;
+    public void updatePosition() {
+        double[] nextPosition = getNextPosition();
+        x = nextPosition[0];
+        y = nextPosition[1];
+
+        lastPositionUpdate = System.nanoTime();
     }
 }

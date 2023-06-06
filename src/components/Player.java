@@ -1,19 +1,25 @@
 package components;
 
-import java.awt.Rectangle;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+
+import javax.swing.ImageIcon;
+
+import main.GameChat;
+import main.Lobby;
 
 public class Player extends MovableEntity {
     static int WIDTH = 48;
     static int HEIGHT = 48;
-    private static int MOVEMENT_SPEED = 3;
-    private int JUMP_HEIGHT = 8;
-    private double GRAVITY = 0.16;
+    private static int MOVEMENT_SPEED = 256;
+    private int JUMP_HEIGHT = 720;
+    private double GRAVITY = 16;
     private double BPS = 4.0;
     private double SECONDS_PER_BULLET = 1.0 / BPS;
     private double KNOCKBACK_FRICTION = 0.1;
-    private int lives = 3;
+    private static final double DAMAGE_AMPLIFIER_PERCENTAGE = 0.15;
 
     private int userId;
     private String userName;
@@ -26,13 +32,25 @@ public class Player extends MovableEntity {
     private double nextBulletFireSeconds = 0.0;
     private Bullet.Direction nextBulletDirection = Bullet.Direction.right;
     private double knockback;
+    private int damageTaken;
+    private int lives = 3;
 
-    public Player(int userId, String userName, char userTeam, int x, int y) {
+    Image player1 = new ImageIcon("src/assets/player1.gif").getImage();
+    Image player2 = new ImageIcon("src/assets/player2.gif").getImage();
+    Image player3 = new ImageIcon("src/assets/player3.gif").getImage();
+    Image player4 = new ImageIcon("src/assets/player4.gif").getImage();
+
+    private Image[] playerGifs = { player1, player2, player3, player4 };
+    private Image playerGif;
+
+    public Player(int userId, String userName, char userTeam, double x, double y, int playerGifIndex) {
         super(x, y, WIDTH, HEIGHT, MOVEMENT_SPEED);
 
         this.userId = userId;
         this.userName = userName;
         this.userTeam = userTeam;
+
+        playerGif = playerGifs[playerGifIndex];
     }
 
     @Override
@@ -126,7 +144,7 @@ public class Player extends MovableEntity {
 
         for (Entity platform : platforms) {
             if (willStandOn(platform)) {
-                // y = platform.y - height; // remove subtle bounce
+                y = platform.y - height;
                 dy = 0;
                 willApplyGravity = false;
                 canJump = true;
@@ -156,8 +174,10 @@ public class Player extends MovableEntity {
     }
 
     public boolean willCollideWith(Entity anotherEntity) {
-        Rectangle2D.Double entityRect = new Rectangle2D.Double(x + dx, y + dy, width, height);
-        Rectangle anotherEntityRect = new Rectangle(anotherEntity.x, anotherEntity.y, anotherEntity.width,
+        double[] nextPosition = getNextPosition();
+        Rectangle2D.Double entityRect = new Rectangle2D.Double(nextPosition[0] + 1, nextPosition[1] + 1, width, height);
+        Rectangle2D.Double anotherEntityRect = new Rectangle2D.Double(anotherEntity.x, anotherEntity.y,
+                anotherEntity.width,
                 anotherEntity.height);
 
         return entityRect.intersects(anotherEntityRect);
@@ -167,8 +187,20 @@ public class Player extends MovableEntity {
         return y + height <= entity.y;
     }
 
-    public void knockback(int magnitude) {
-        this.knockback += magnitude;
+    public void hitBy(Bullet bullet) {
+        int bulletDamage = bullet.getDamage();
+        int impact = bullet.getImpact();
+
+        damageTaken += bulletDamage + (damageTaken * DAMAGE_AMPLIFIER_PERCENTAGE);
+        knockback += impact + (impact * (damageTaken / 100.0));
+    }
+
+    public void respawn() {
+        x = (Lobby.WINDOW_WIDTH - GameChat.WIDTH - width) / 2;
+        y = -height;
+        dx = 0;
+        dy = 0;
+        damageTaken = 0;
     }
 
     public int getUserId() {
@@ -185,5 +217,13 @@ public class Player extends MovableEntity {
 
     public boolean hasLife(){
         return this.lives > 0;
+
+    @Override
+    public void draw(Graphics graphics) {
+        if (nextBulletDirection == Bullet.Direction.right) {
+            graphics.drawImage(playerGif, (int) x, (int) y - 2, width, height, null);
+        } else {
+            graphics.drawImage(playerGif, (int) x + width, (int) y - 2, -width, height, null);
+        }
     }
 }
