@@ -24,11 +24,11 @@ public class Lobby extends JFrame {
         this.setResizable(false);
         this.setLocationRelativeTo(null); // center window on screen
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.PAGE_AXIS));
-        this.setLayout(new GridBagLayout());
+        this.setLayout(new BorderLayout());
     }
 
     public void homepage() {
+        gameChat = new GameChat();
         this.getContentPane().removeAll();
         TextField usernameInput = new TextField(20);
         JButton b1 = new JButton("Create Lobby");
@@ -57,28 +57,37 @@ public class Lobby extends JFrame {
             }
         });
 
+        JPanel formJoin = new JPanel();
+        formJoin.setLayout(new GridBagLayout());
+
+        JLabel user = new JLabel("Enter player name: ", SwingConstants.CENTER);
+        user.setLabelFor((usernameInput));
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
+
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
-        JLabel user = new JLabel("Enter player name: ", SwingConstants.CENTER);
-        user.setLabelFor((usernameInput));
-        this.add(user, gbc);
+        formJoin.add(user, gbc);
+
         gbc.gridx = 0;
         gbc.gridy = 1;
-        this.add(usernameInput, gbc);
+        formJoin.add(usernameInput, gbc);
+
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.gridwidth = 1;
         gbc.gridheight = 2;
-        this.add(b1, gbc);
+        formJoin.add(b1, gbc);
+
         gbc.gridx = 1;
         gbc.gridy = 3;
-        this.add(b2, gbc);
-        this.setVisible(true);
+        formJoin.add(b2, gbc);
 
+        this.setVisible(true);
+        this.add(formJoin);
         refreshFrame();
         return;
     }
@@ -87,7 +96,6 @@ public class Lobby extends JFrame {
         gameState = new GameState();
         gameHud = new GameHud();
 
-        gameChat = new GameChat();
         gameChat.setFocusable(true);
         gameChat.attachClient(client);
 
@@ -99,9 +107,6 @@ public class Lobby extends JFrame {
 
         this.getContentPane().removeAll();
 
-        // ! add chat UI to lobby page:
-        // this.add(gameChat, BorderLayout.EAST);
-
         String[] players = { name };
         String label = "";
         for (int i = 0; i < players.length; i++) {
@@ -111,8 +116,10 @@ public class Lobby extends JFrame {
         JLabel portLabel = new JLabel("Port Number: " + Integer.toString(portNumber), SwingConstants.CENTER);
         JLabel playersLabel = new JLabel("Players: ".concat(label), SwingConstants.CENTER);
         JLabel confirmation = new JLabel("Start the game?", SwingConstants.CENTER);
+
         JButton b1 = new JButton("Start");
         JButton b2 = new JButton("Main menu");
+
         confirmation.setLabelFor(b1);
         b1.setBackground(Color.green);
         b2.setBackground(Color.cyan);
@@ -130,29 +137,45 @@ public class Lobby extends JFrame {
                 homepage();
             }
         });
+
+        JPanel formInfo = new JPanel();
+        formInfo.setLayout(new BorderLayout());
+
+        JPanel components = new JPanel();
+        components.setLayout(new GridBagLayout());
+
         GridBagConstraints gbc = new GridBagConstraints();
+
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
-        this.add(ipLabel, gbc);
+        components.add(ipLabel, gbc);
+
         gbc.gridy = 1;
-        this.add(portLabel, gbc);
+        components.add(portLabel, gbc);
+
         gbc.gridy = 2;
-        this.add(playersLabel, gbc);
+        components.add(playersLabel, gbc);
 
         if (server != null) {
             gbc.gridy = 3;
-            this.add(confirmation, gbc);
+            components.add(confirmation, gbc);
+
             gbc.gridy = 4;
             gbc.gridwidth = 1;
             gbc.gridheight = 2;
-            this.add(b1, gbc);
+            components.add(b1, gbc);
+
         }
 
         gbc.gridx = 1;
         gbc.gridy = 5;
-        this.add(b2, gbc);
+        components.add(b2, gbc);
+
+        formInfo.add(components);
+        formInfo.add(gameChat, BorderLayout.EAST);
+        this.add(formInfo);
         refreshFrame();
     }
 
@@ -160,12 +183,15 @@ public class Lobby extends JFrame {
         this.getContentPane().removeAll();
         JLabel ip, port;
         TextField ipInput, portInput;
+
         ip = new JLabel("IP Address:", SwingConstants.CENTER);
         port = new JLabel("Port Number:", SwingConstants.CENTER);
         ipInput = new TextField(20);
         portInput = new TextField(20);
+
         ip.setLabelFor(ipInput);
         port.setLabelFor(portInput);
+
         JButton b1 = new JButton("Join Lobby");
         b1.setBackground(Color.green);
         b1.addActionListener(new ActionListener() {
@@ -191,22 +217,33 @@ public class Lobby extends JFrame {
             }
         });
 
+        JPanel formCreate = new JPanel();
+        formCreate.setLayout(new GridBagLayout());
+
         GridBagConstraints gbc = new GridBagConstraints();
+
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.gridy = 0;
-        this.add(ip, gbc);
-        gbc.gridy = 1;
-        this.add(ipInput, gbc);
-        gbc.gridy = 2;
-        this.add(port, gbc);
-        gbc.gridy = 3;
-        this.add(portInput, gbc);
-        gbc.gridy = 4;
-        this.add(b1, gbc);
-        gbc.gridy = 5;
-        this.add(b2, gbc);
+        formCreate.add(ip, gbc);
 
+        gbc.gridy = 1;
+        formCreate.add(ipInput, gbc);
+
+        gbc.gridy = 2;
+        formCreate.add(port, gbc);
+
+        gbc.gridy = 3;
+        formCreate.add(portInput, gbc);
+
+        gbc.gridy = 4;
+        formCreate.add(b1, gbc);
+
+        gbc.gridy = 5;
+        formCreate.add(b2, gbc);
+
+        this.add(formCreate);
+        this.add(gameChat, BorderLayout.EAST);
         refreshFrame();
     }
 
