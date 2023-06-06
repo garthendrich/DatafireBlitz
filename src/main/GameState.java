@@ -33,6 +33,8 @@ public class GameState {
     static int L_OFFSET = 15;
     static int R_OFFSET = -30;
 
+    private int nextPlayerGifIndex = 0;
+
     static int[][] LEVEL_DATA = {
         {0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0},
         {0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0},
@@ -124,7 +126,8 @@ public class GameState {
     }
 
     public void createPlayer(int userId, String userName, char userTeam) {
-        players.add(new Player(userId, userName, userTeam, 400, 0));
+        players.add(new Player(userId, userName, userTeam, 400, 0, nextPlayerGifIndex));
+        nextPlayerGifIndex = (nextPlayerGifIndex + 1);
     }
 
     public Player findPlayer(int userId) {

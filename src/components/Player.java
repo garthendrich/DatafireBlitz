@@ -34,12 +34,17 @@ public class Player extends MovableEntity {
     Image player3 = new ImageIcon("src/assets/player3.gif").getImage();
     Image player4 = new ImageIcon("src/assets/player4.gif").getImage();
 
-    public Player(int userId, String userName, char userTeam, double x, double y) {
+    private Image[] playerGifs = { player1, player2, player3, player4 };
+    private Image playerGif;
+
+    public Player(int userId, String userName, char userTeam, double x, double y, int playerGifIndex) {
         super(x, y, WIDTH, HEIGHT, MOVEMENT_SPEED);
 
         this.userId = userId;
         this.userName = userName;
         this.userTeam = userTeam;
+
+        playerGif = playerGifs[playerGifIndex];
     }
 
     @Override
@@ -191,9 +196,9 @@ public class Player extends MovableEntity {
     @Override
     public void draw(Graphics graphics) {
         if (nextBulletDirection == Bullet.Direction.right) {
-            graphics.drawImage(player1, (int) x, (int) y - 2, width, height, null);
+            graphics.drawImage(playerGif, (int) x, (int) y - 2, width, height, null);
         } else {
-            graphics.drawImage(player1, (int) x + width, (int) y - 2, -width, height, null);
+            graphics.drawImage(playerGif, (int) x + width, (int) y - 2, -width, height, null);
         }
     }
 
