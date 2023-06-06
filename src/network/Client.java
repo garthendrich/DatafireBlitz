@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import main.GameChat;
+import main.GameHud;
 import main.GameState;
 import main.Lobby;
 import network.datatypes.Data;
@@ -12,6 +13,7 @@ import network.datatypes.MessageData;
 import network.datatypes.PlayerCreationData;
 import network.datatypes.PositionData;
 import network.datatypes.StartGameData;
+import network.datatypes.StatsData;
 import network.datatypes.ToggleFireData;
 import network.datatypes.MovementData;
 import network.datatypes.ClientCreationData;
@@ -20,6 +22,7 @@ public class Client extends NetworkNode {
     private Lobby lobbyPage;
     private GameState gameState;
     private GameChat chat;
+    private GameHud gameHud;
 
     public Client(String userName, String ipAddress, int portNumber) {
         connect(ipAddress, portNumber);
@@ -50,14 +53,23 @@ public class Client extends NetworkNode {
             lobbyPage.startGame();
         } else if (data instanceof PlayerCreationData) {
             PlayerCreationData playerCreationData = (PlayerCreationData) data;
-            gameState.createPlayer(playerCreationData.getUserId(), playerCreationData.getUserName(),
-                    playerCreationData.getUserTeam());
+            int userId = playerCreationData.getUserId();
+            String userName = playerCreationData.getUserName();
+            char userTeam = playerCreationData.getUserTeam();
+
+            gameState.createPlayer(userId, userName, userTeam);
+            gameHud.createPlayer(userId, userName);
+            gameHud.displayHUD();
         } else if (data instanceof MovementData) {
             gameState.updatePlayerPosition((PositionData) data);
             gameState.movePlayer((MovementData) data);
         } else if (data instanceof ToggleFireData) {
             gameState.updatePlayerPosition((PositionData) data);
             gameState.toggleFire((ToggleFireData) data);
+        } else if (data instanceof StatsData) {
+            StatsData statsData = (StatsData) data;
+            gameState.setStats(statsData);
+            gameHud.setHearts(statsData.getUserId(), statsData.getLives());
         }
     }
 
@@ -71,5 +83,9 @@ public class Client extends NetworkNode {
 
     public void attachGameState(GameState gameState) {
         this.gameState = gameState;
+    }
+
+    public void attachGameHud(GameHud gameHud) {
+        this.gameHud = gameHud;
     }
 }
