@@ -40,8 +40,8 @@ public class GameState {
         int userId = positionData.getUserId();
         Player player = findPlayer(userId);
 
-        int x = positionData.getPlayerX();
-        int y = positionData.getPlayerY();
+        double x = positionData.getPlayerX();
+        double y = positionData.getPlayerY();
         player.setPosition(x, y);
     }
 

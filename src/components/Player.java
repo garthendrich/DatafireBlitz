@@ -1,15 +1,14 @@
 package components;
 
-import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 public class Player extends MovableEntity {
     static int WIDTH = 48;
     static int HEIGHT = 48;
-    private static int MOVEMENT_SPEED = 3;
-    private int JUMP_HEIGHT = 8;
-    private double GRAVITY = 0.16;
+    private static int MOVEMENT_SPEED = 256;
+    private int JUMP_HEIGHT = 640;
+    private double GRAVITY = 16;
     private double BPS = 4.0;
     private double SECONDS_PER_BULLET = 1.0 / BPS;
     private double KNOCKBACK_FRICTION = 0.1;
@@ -26,7 +25,7 @@ public class Player extends MovableEntity {
     private Bullet.Direction nextBulletDirection = Bullet.Direction.right;
     private double knockback;
 
-    public Player(int userId, String userName, char userTeam, int x, int y) {
+    public Player(int userId, String userName, char userTeam, double x, double y) {
         super(x, y, WIDTH, HEIGHT, MOVEMENT_SPEED);
 
         this.userId = userId;
@@ -125,7 +124,7 @@ public class Player extends MovableEntity {
 
         for (Entity platform : platforms) {
             if (willStandOn(platform)) {
-                // y = platform.y - height; // remove subtle bounce
+                y = platform.y - height;
                 dy = 0;
                 willApplyGravity = false;
                 canJump = true;
@@ -155,8 +154,10 @@ public class Player extends MovableEntity {
     }
 
     public boolean willCollideWith(Entity anotherEntity) {
-        Rectangle2D.Double entityRect = new Rectangle2D.Double(x + dx, y + dy, width, height);
-        Rectangle anotherEntityRect = new Rectangle(anotherEntity.x, anotherEntity.y, anotherEntity.width,
+        double[] nextPosition = getNextPosition();
+        Rectangle2D.Double entityRect = new Rectangle2D.Double(nextPosition[0] + 1, nextPosition[1] + 1, width, height);
+        Rectangle2D.Double anotherEntityRect = new Rectangle2D.Double(anotherEntity.x, anotherEntity.y,
+                anotherEntity.width,
                 anotherEntity.height);
 
         return entityRect.intersects(anotherEntityRect);
