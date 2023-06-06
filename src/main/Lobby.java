@@ -87,14 +87,15 @@ public class Lobby extends JFrame {
         gameHud = new GameHud();
         gameState = new GameState(gameHud);
 
-        gameChat = new GameChat();
-        gameChat.setFocusable(true);
-        gameChat.attachClient(client);
-
         client = new Client(name, ipAddress, portNumber);
         client.attachLobbyPage(this);
         client.attachGameState(gameState);
         client.attachGameHud(gameHud);
+
+        gameChat = new GameChat();
+        gameChat.setFocusable(true);
+        gameChat.attachClient(client);
+
         client.attachChat(gameChat);
 
         this.getContentPane().removeAll();
