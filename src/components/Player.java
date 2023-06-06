@@ -217,6 +217,7 @@ public class Player extends MovableEntity {
 
     public boolean hasLife(){
         return this.lives > 0;
+    }
 
     @Override
     public void draw(Graphics graphics) {
