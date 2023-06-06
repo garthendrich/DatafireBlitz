@@ -16,8 +16,10 @@ public class Bullet extends MovableEntity {
     private static int HEIGHT = 4;
     private static int MOVEMENT_SPEED = 1600;
 
-    private char team;
-    private int impact = 4;
+    private final int impact = 4;
+    private final int damage = 2;
+
+    private final char team;
 
     Image bullet = new ImageIcon("src/assets/bullet.png").getImage();
 
@@ -32,11 +34,15 @@ public class Bullet extends MovableEntity {
     }
 
     public int getImpact() {
-        if (this.dx > 0) {
-            return this.impact;
+        if (dx > 0) {
+            return impact;
         }
 
-        return -this.impact;
+        return -impact;
+    }
+
+    public int getDamage() {
+        return damage;
     }
 
     public boolean isOutsideWindow() {

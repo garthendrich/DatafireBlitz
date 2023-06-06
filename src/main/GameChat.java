@@ -19,6 +19,8 @@ import network.Client;
 import network.datatypes.MessageData;
 
 public class GameChat extends JPanel {
+    public static int WIDTH = 225;
+
     // Elements declaration
     JTextArea chatHistory;
     JTextField inputField;
@@ -29,7 +31,7 @@ public class GameChat extends JPanel {
     GameChat() {
         // set
         this.setLayout(new FlowLayout());
-        this.setPreferredSize(new Dimension(225, 540));
+        this.setPreferredSize(new Dimension(WIDTH, 540));
         this.setBackground(new Color(0, 0, 0, 64));
         this.setVisible(true);
         setFocusable(true);

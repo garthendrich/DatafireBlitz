@@ -217,7 +217,7 @@ public class GameState {
         for (Bullet bullet : bullets) {
             for (Player player : players) {
                 if (bullet.isCollidingWith(player) && bullet.getTeam() != player.getUserTeam()) {
-                    player.knockback(bullet.getImpact());
+                    player.hitBy(bullet);
                     collidedBullets.add(bullet);
                     break;
                 }
