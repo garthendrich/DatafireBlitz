@@ -242,9 +242,6 @@ public class GameState {
                 if (server != null) {
                     player.loseLife();
                     server.update(new StatsData(player.getUserId(), player.getLives()));
-                }
-
-                if (player.hasLife()) {
                     player.respawn();
                 }
             }
@@ -257,6 +254,11 @@ public class GameState {
 
         int lives = statsData.getLives();
         player.setLives(lives);
+    }
+
+    public void respawnPlayer(int userId) {
+        Player player = findPlayer(userId);
+        player.respawn();
     }
 
     ArrayList<Entity> getEntities() {

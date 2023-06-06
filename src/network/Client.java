@@ -68,8 +68,12 @@ public class Client extends NetworkNode {
             gameState.toggleFire((ToggleFireData) data);
         } else if (data instanceof StatsData) {
             StatsData statsData = (StatsData) data;
+            int userId = statsData.getUserId();
+            int lives = statsData.getLives();
+
             gameState.setStats(statsData);
-            gameHud.setHearts(statsData.getUserId(), statsData.getLives());
+            gameHud.setHearts(userId, lives);
+            gameState.respawnPlayer(userId);
         }
     }
 

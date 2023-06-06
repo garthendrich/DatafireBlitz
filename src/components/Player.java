@@ -197,6 +197,10 @@ public class Player extends MovableEntity {
     }
 
     public void respawn() {
+        if (lives <= 0) {
+            return;
+        }
+
         x = (Lobby.WINDOW_WIDTH - GameChat.WIDTH - width) / 2;
         y = -height;
         dx = 0;
