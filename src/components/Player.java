@@ -13,6 +13,7 @@ public class Player extends MovableEntity {
     private double BPS = 4.0;
     private double SECONDS_PER_BULLET = 1.0 / BPS;
     private double KNOCKBACK_FRICTION = 0.1;
+    private int lives = 3;
 
     private int userId;
     private String userName;
@@ -176,5 +177,13 @@ public class Player extends MovableEntity {
 
     public char getUserTeam() {
         return userTeam;
+    }
+
+    public void setLives(int change){
+        this.lives += change;
+    }
+
+    public int getLives(){
+        return this.lives;
     }
 }

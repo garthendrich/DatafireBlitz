@@ -126,7 +126,8 @@ public class GameState {
     void respawnKnockedOutPlayers() {
         for (Player player : players) {
             if (player.getY() >= 700) {
-                player.respawn();
+                player.setLives(-1);
+                if(player.getLives() > 0) player.respawn();
             }
         }
     }
