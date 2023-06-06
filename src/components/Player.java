@@ -228,4 +228,12 @@ public class Player extends MovableEntity {
             graphics.drawImage(playerGif, (int) x + width, (int) y - 2, -width, height, null);
         }
     }
+
+    public int getLives() {
+        return lives;
+    }
+
+    public void setLives(int lives) {
+        this.lives = lives;
+    }
 }

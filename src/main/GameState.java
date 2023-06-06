@@ -13,8 +13,10 @@ import components.Bullet;
 import components.Entity;
 import components.Player;
 import network.datatypes.ToggleFireData;
+import network.Server;
 import network.datatypes.MovementData;
 import network.datatypes.PositionData;
+import network.datatypes.StatsData;
 
 public class GameState {
     private ArrayList<Player> players = new ArrayList<Player>();
@@ -35,6 +37,8 @@ public class GameState {
 
     private int nextPlayerGifIndex = 0;
 
+    private Server server;
+
     static int[][] LEVEL_DATA = {
         {0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0},
         {0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0},
@@ -51,6 +55,11 @@ public class GameState {
     };
 
     static Image player1 = new ImageIcon("src/assets/player1.gif").getImage();
+
+    public GameState(Server server) {
+        this();
+        this.server = server;
+    }
 
     public GameState() {
         createPlatforms();
@@ -226,16 +235,28 @@ public class GameState {
         bullets.removeAll(collidedBullets);
     }
 
-    void respawnKnockedOutPlayers() {
+    void manageKnockedOutPlayers() {
         for (Player player : players) {
+
             if (player.hasLife() && player.getY() >= 700) {
-                player.loseLife();
+                if (server != null) {
+                    player.loseLife();
+                    server.update(new StatsData(player.getUserId(), player.getLives()));
+                }
 
                 if (player.hasLife()) {
                     player.respawn();
                 }
             }
         }
+    }
+
+    public void setStats(StatsData statsData) {
+        int userId = statsData.getUserId();
+        Player player = findPlayer(userId);
+
+        int lives = statsData.getLives();
+        player.setLives(lives);
     }
 
     ArrayList<Entity> getEntities() {

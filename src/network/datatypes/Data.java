@@ -2,7 +2,7 @@ package network.datatypes;
 
 abstract public class Data {
     private static enum DataType {
-        clientCreation, startGame, playerCreation, gameInput, movement, fire, message
+        clientCreation, startGame, playerCreation, gameInput, movement, fire, message, stats
     }
 
     public String getSerialized() {
@@ -45,6 +45,12 @@ abstract public class Data {
                     Double.toString(data.getPlayerY()));
         }
 
+        if (this instanceof StatsData) {
+            StatsData data = (StatsData) this;
+            return String.join(",", DataType.stats.toString(), Integer.toString(data.getUserId()),
+                    Integer.toString(data.getLives()));
+        }
+
         System.out.println("Error serializing data " + this.getClass().getSimpleName());
         return null;
     }
@@ -80,6 +86,10 @@ abstract public class Data {
         if (dataChunks[0].equals(DataType.fire.toString())) {
             return new ToggleFireData(Integer.parseInt(dataChunks[1]), ToggleFireData.Status.valueOf(dataChunks[2]),
                     Double.parseDouble(dataChunks[3]), Double.parseDouble(dataChunks[4]));
+        }
+
+        if (dataChunks[0].equals(DataType.stats.toString())) {
+            return new StatsData(Integer.parseInt(dataChunks[1]), Integer.parseInt(dataChunks[2]));
         }
 
         System.out.println("Error deserializing data " + serializedData);

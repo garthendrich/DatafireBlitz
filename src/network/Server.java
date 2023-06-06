@@ -83,9 +83,7 @@ public class Server implements Runnable {
     }
 
     public void startGame() {
-        broadcast(new StartGameData());
-
-        serverGameState = new GameState();
+        serverGameState = new GameState(this);
         new GameLoop(serverGameState);
 
         for (ClientHandler clientHandler : clientHandlers) {
@@ -98,6 +96,8 @@ public class Server implements Runnable {
             PlayerCreationData playerCreationData = new PlayerCreationData(userId, userName, userTeam);
             broadcast(playerCreationData);
         }
+
+        broadcast(new StartGameData());
     }
 
     public void setVaryingTeams() {
@@ -108,7 +108,7 @@ public class Server implements Runnable {
         }
     }
 
-    void update(Data data) {
+    public void update(Data data) {
         if (data instanceof GameInputData) {
             GameInputData gameInputData = (GameInputData) data;
 

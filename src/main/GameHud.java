@@ -3,6 +3,7 @@ package main;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -11,47 +12,37 @@ import javax.swing.JPanel;
 public class GameHud extends JPanel {
     int PLAYER_HUD_HEIGHT = 60;
     int PLAYER_HUD_WIDTH = 130;
-    int numPlayer;
-
-    JPanel player1, player2, player3, player4;
-    JLabel hearts1, hearts2, hearts3, hearts4;
 
     ImageIcon heart0 = new ImageIcon("src/assets/hearts0.png");
     ImageIcon heart1 = new ImageIcon("src/assets/hearts1.png");
     ImageIcon heart2 = new ImageIcon("src/assets/hearts2.png");
     ImageIcon heart3 = new ImageIcon("src/assets/hearts3.png");
 
+    private ArrayList<Integer> userIds = new ArrayList<Integer>();
+    private ArrayList<JPanel> playerDisplays = new ArrayList<JPanel>();
+    private ArrayList<JLabel> playerHeartDisplays = new ArrayList<JLabel>();
+    private ImageIcon[] heartImages = { heart0, heart1, heart2, heart3 };
+
     GameHud() {
         this.setLayout(new FlowLayout(FlowLayout.CENTER, 50, 5));
         this.setPreferredSize(new Dimension(500, 70));
         this.setVisible(true);
-
-        // TO-DO: retrieve actual player count
-        numPlayer = 4;
-
-        displayHUD(numPlayer);
-
-        // sample
-        updateHearts(hearts2, 2);
-        updateHearts(hearts3, 1);
-        updateHearts(hearts4, 0);
     }
 
-    private void updateHearts(JLabel hearts, int health) {
-        switch (health) {
-            case 3:
-                hearts.setIcon(heart3);
-                break;
-            case 2:
-                hearts.setIcon(heart2);
-                break;
-            case 1:
-                hearts.setIcon(heart1);
-                break;
-            case 0:
-                hearts.setIcon(heart0);
-                break;
-        }
+    public void createPlayer(int userId, String userName) {
+        userIds.add(userId);
+
+        JLabel playerHeartDisplay = newHearts();
+        playerHeartDisplays.add(playerHeartDisplay);
+
+        JPanel playerDisplay = createPlayerHUD(playerDisplays.size(), userName, playerHeartDisplay);
+        playerDisplays.add(playerDisplay);
+    }
+
+    public void setHearts(int userId, int lives) {
+        int playerHeartDisplayIndex = userIds.indexOf(userId);
+        JLabel playerHeartDisplay = playerHeartDisplays.get(playerHeartDisplayIndex);
+        playerHeartDisplay.setIcon(heartImages[lives]);
     }
 
     private JLabel newHearts() {
@@ -99,32 +90,14 @@ public class GameHud extends JPanel {
         JPanel playerHUD = new JPanel();
         playerHUD.setLayout(new BorderLayout());
         playerHUD.setPreferredSize(new Dimension(PLAYER_HUD_WIDTH, PLAYER_HUD_HEIGHT));
-        playerHUD.add(newPlayerImage(playerNumber), BorderLayout.WEST);
+        playerHUD.add(newPlayerImage(playerNumber + 1), BorderLayout.WEST);
         playerHUD.add(newComponent(hearts, playerName));
         return playerHUD;
     }
 
-    public void displayHUD(int numPlayer) {
-        hearts1 = newHearts();
-        player1 = createPlayerHUD(1, "Player 1", hearts1);
-        this.add(player1);
-
-        if (numPlayer > 1) {
-            hearts2 = newHearts();
-            player2 = createPlayerHUD(2, "Player 2", hearts2);
-            this.add(player2);
-        }
-
-        if (numPlayer > 2) {
-            hearts3 = newHearts();
-            player3 = createPlayerHUD(3, "Player 3", hearts3);
-            this.add(player3);
-        }
-
-        if (numPlayer > 3) {
-            hearts4 = newHearts();
-            player4 = createPlayerHUD(4, "Player 4", hearts4);
-            this.add(player4);
+    public void displayHUD() {
+        for (JPanel playerDisplay : playerDisplays) {
+            this.add(playerDisplay);
         }
     }
 }

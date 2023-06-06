@@ -37,7 +37,7 @@ public class GameLoop implements Runnable {
                 gameState.spawnBullets();
                 gameState.removeOffscreenBullets();
                 gameState.manageBulletCollisions();
-                gameState.respawnKnockedOutPlayers();
+                gameState.manageKnockedOutPlayers();
 
                 if (gamePanel != null) {
                     gamePanel.render(gameState);

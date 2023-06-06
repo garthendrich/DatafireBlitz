@@ -15,6 +15,7 @@ public class Lobby extends JFrame {
     Server server;
     Client client;
     GameChat gameChat;
+    GameState gameState;
     GameHud gameHud;
 
     public Lobby() {
@@ -83,14 +84,18 @@ public class Lobby extends JFrame {
     }
 
     private void lobbyPage(String name, String ipAddress, int portNumber) {
-        client = new Client(name, ipAddress, portNumber);
-        client.attachLobbyPage(this);
+        gameState = new GameState();
+        gameHud = new GameHud();
 
         gameChat = new GameChat();
         gameChat.setFocusable(true);
-
-        client.attachChat(gameChat);
         gameChat.attachClient(client);
+
+        client = new Client(name, ipAddress, portNumber);
+        client.attachLobbyPage(this);
+        client.attachGameState(gameState);
+        client.attachGameHud(gameHud);
+        client.attachChat(gameChat);
 
         this.getContentPane().removeAll();
 
@@ -219,14 +224,9 @@ public class Lobby extends JFrame {
         new GameKeyInputs(gamePanel, client);
         addListeners(gameChat, gamePanel);
 
-        GameState gameState = new GameState();
-        client.attachGameState(gameState);
-
         new GameLoop(gameState, gamePanel);
 
         this.setLayout(new BorderLayout());
-
-        gameHud = new GameHud();
 
         gameComponent.add(gamePanel);
         gameComponent.add(gameHud, BorderLayout.SOUTH);
