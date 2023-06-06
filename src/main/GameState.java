@@ -126,7 +126,7 @@ public class GameState {
     }
 
     public void createPlayer(int userId, String userName, char userTeam) {
-        players.add(new Player(userId, userName, userTeam, 400, 0, nextPlayerGifIndex));
+        players.add(new Player(userId, userName, userTeam, nextPlayerGifIndex));
         nextPlayerGifIndex = (nextPlayerGifIndex + 1);
     }
 
