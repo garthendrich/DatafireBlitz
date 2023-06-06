@@ -13,7 +13,7 @@ import network.datatypes.MessageData;
 import network.datatypes.PlayerCreationData;
 import network.datatypes.PositionData;
 import network.datatypes.StartGameData;
-import network.datatypes.StatsData;
+import network.datatypes.LivesData;
 import network.datatypes.ToggleFireData;
 import network.datatypes.MovementData;
 import network.datatypes.ClientCreationData;
@@ -66,12 +66,12 @@ public class Client extends NetworkNode {
         } else if (data instanceof ToggleFireData) {
             gameState.updatePlayerPosition((PositionData) data);
             gameState.toggleFire((ToggleFireData) data);
-        } else if (data instanceof StatsData) {
-            StatsData statsData = (StatsData) data;
+        } else if (data instanceof LivesData) {
+            LivesData statsData = (LivesData) data;
             int userId = statsData.getUserId();
             int lives = statsData.getLives();
 
-            gameState.setStats(statsData);
+            gameState.setLives(statsData);
             gameHud.setHearts(userId, lives);
             gameState.respawnPlayer(userId);
         }

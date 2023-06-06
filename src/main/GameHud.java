@@ -63,9 +63,10 @@ public class GameHud extends JPanel {
         return damages;
     }
 
-    private void setDamage(JLabel damages, int damage) {
-        int newHealth = Integer.parseInt(damages.getText().replace("%", "")) + damage;
-        damages.setText(newHealth + "%");
+    void setDamage(int userId, int damage) {
+        int playerDamageDisplayIndex = userIds.indexOf(userId);
+        JLabel playerDamageDisplay = playerDamageDisplays.get(playerDamageDisplayIndex);
+        playerDamageDisplay.setText(damage + "%");
     }
 
     private JPanel newComponent(JLabel hearts, JLabel damages, String playerName) {

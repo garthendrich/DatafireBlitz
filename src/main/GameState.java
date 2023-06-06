@@ -16,7 +16,7 @@ import network.datatypes.ToggleFireData;
 import network.Server;
 import network.datatypes.MovementData;
 import network.datatypes.PositionData;
-import network.datatypes.StatsData;
+import network.datatypes.LivesData;
 
 public class GameState {
     private ArrayList<Player> players = new ArrayList<Player>();
@@ -38,6 +38,7 @@ public class GameState {
     private int nextPlayerGifIndex = 0;
 
     private Server server;
+    private GameHud gameHud;
 
     static int[][] LEVEL_DATA = {
         {0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0},
@@ -59,6 +60,11 @@ public class GameState {
     public GameState(Server server) {
         this();
         this.server = server;
+    }
+
+    public GameState(GameHud gameHud) {
+        this();
+        this.gameHud = gameHud;
     }
 
     public GameState() {
@@ -228,6 +234,11 @@ public class GameState {
                 if (bullet.isCollidingWith(player) && bullet.getTeam() != player.getUserTeam()) {
                     player.hitBy(bullet);
                     collidedBullets.add(bullet);
+
+                    if (gameHud != null) {
+                        gameHud.setDamage(player.getUserId(), player.getDamageTaken());
+                    }
+
                     break;
                 }
             }
@@ -241,14 +252,18 @@ public class GameState {
             if (player.hasLife() && player.getY() >= 700) {
                 if (server != null) {
                     player.loseLife();
-                    server.update(new StatsData(player.getUserId(), player.getLives()));
+                    server.update(new LivesData(player.getUserId(), player.getLives()));
                     player.respawn();
+                }
+
+                if (gameHud != null) {
+                    gameHud.setDamage(player.getUserId(), 0);
                 }
             }
         }
     }
 
-    public void setStats(StatsData statsData) {
+    public void setLives(LivesData statsData) {
         int userId = statsData.getUserId();
         Player player = findPlayer(userId);
 
